@@ -53,6 +53,7 @@ const statusKeys: RelationStatus[] = [
   "conditional",
   "optional",
   "alternative",
+  "related",
 ];
 
 
@@ -64,8 +65,8 @@ const statusLabels: Record<
   conditional: "Koşula Bağlı",
   optional: "Opsiyonel",
   alternative: "Alternatif",
+  related: "İlgili Çözüm",
 };
-
 
 const statusDescriptions: Record<
   RelationStatus,
@@ -82,6 +83,8 @@ const statusDescriptions: Record<
 
   alternative:
     "Aynı veya benzer ihtiyacın farklı kapsam ya da yöntemle karşılanabildiği alternatif ürün yaklaşımını ifade eder.",
+  related:
+    "Seçili ürünün alternatifi olmayan ancak aynı sistem veya uygulamada bağlantılı bir ihtiyaca çözüm sunduğu için birlikte değerlendirilebilecek ürünü ifade eder.",
 };
 
 
@@ -93,6 +96,7 @@ const statusOrder: Record<
   conditional: 1,
   optional: 2,
   alternative: 3,
+  related: 4,
 };
 
 
@@ -111,6 +115,8 @@ const statusStyles: Record<
 
   alternative:
     "border-violet-200 bg-violet-50 text-violet-700",
+  related:
+    "border-emerald-200 bg-emerald-50 text-emerald-700",
 };
 
 

@@ -1095,8 +1095,8 @@ export const relations: Relation[] = [
     targetProductId: "ampermetreler",
     type: "measurement-input",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Yerel Akım Gösterimi",
     targetTitle: "Analog Akım Sinyali",
@@ -1149,8 +1149,8 @@ export const relations: Relation[] = [
     targetProductId: "voltmetreler",
     type: "measurement-input",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Yerel Gerilim Gösterimi",
     targetTitle: "Analog Gerilim Sinyali",

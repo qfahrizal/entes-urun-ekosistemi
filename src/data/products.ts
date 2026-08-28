@@ -9,6 +9,48 @@ export const products: Product[] = [
   {
     id: "sebeke-analizorleri",
     name: "Şebeke Analizörleri",
+    seriesPages: [
+      {
+        name: "MPR-1 Serisi", 
+        path: "/mpr-1-serisi-sebeke-analizorleri/",
+      },
+      {
+        name: "MPR-2 Serisi",
+        path: "/mpr-2-serisi-sebeke-analizorleri/",
+      },
+      {
+        name: "MPR-3 Serisi",
+        path: "/mpr-3-serisi-sebeke-analizorleri/",
+      },
+      {
+        name: "MPR-4 Serisi",
+        path: "/mpr-4-serisi-sebeke-analizorleri/",
+      },
+      {
+        name: "MPR-4 Uyumlu Modüller",
+        path: "/mpr-4-uyumlu-moduller/",
+      },
+      {
+        name: "MPR-5 Serisi",
+        path: "/mpr-5-serisi-sebeke-analizorleri/",
+      },
+      {
+        name: "MPR-6 Serisi",
+        path: "/mpr-6-serisi-sebeke-analizorleri/",
+      },
+      {
+        name: "EMR Serisi",
+        path: "/emr-serisi-sebeke-analizorleri/",
+      },
+      {
+        name: "EPM-07 Serisi",
+        path: "/epm-07-serisi-sebeke-analizorleri/",
+      },
+      {
+        name: "Plug&Meter Ürünleri",
+        path: "/plug-meter-urunleri/",
+      },
+    ],
     /*modelPreviews: [
       {
         name: "MPR-1 Serisi",
@@ -75,6 +117,28 @@ export const products: Product[] = [
   {
     id: "guc-enerji-olcer",
     name: "Güç ve Enerji Ölçerler",
+    seriesPages: [
+      {
+        name: "ES Serisi",
+        path: "/es-serisi-enerji-olcerler/",
+      },
+      {
+        name: "ES3 Serisi",
+        path: "/es3-enerji-olcerler/",
+      },
+      {
+        name: "ES3M MID Serisi",
+        path: "/es3m-mid-serisi-3-fazli-sayac-enerji-olcerler/",
+      },
+      {
+        name: "EMR-04 Serisi",
+        path: "/emr-04-serisi-guc-ve-enerji-olcerler/",
+      },
+      {
+        name: "EPR Serisi",
+        path: "/epr-serisi-guc-ve-enerji-olcerler/",
+      },
+    ],
     /* modelPreviews: [
       {
         name: "ES Serisi",
@@ -248,6 +312,20 @@ export const products: Product[] = [
   {
     id: "svc-urunleri",
     name: "SVC Ürünleri",
+    seriesPages: [
+      {
+        name: "RGSR Serisi",
+        path: "/rgsr-reaktif-guc-kontrol-roleleri/",
+      },
+      {
+        name: "SR Serisi",
+        path: "/enduktif-yuk-suruculeri/",
+      },
+      {
+        name: "ENT.SRS1.230 Serisi",
+        path: "/svc-cozumu-sont-reaktorler/",
+      },
+    ],
     category: "correction",
     menuCategory: "compensation",
     role: "Hızlı değişen ve dengesiz yüklerde dinamik reaktif güç kompanzasyonu",
@@ -261,6 +339,16 @@ export const products: Product[] = [
   {
     id: "svg-ahf",
     name: "Statik Var Generatör (SVG) & Aktif Harmonik Filtre (AHF)",
+    seriesPages: [
+      {
+        name: "SVG",
+        path: "/statik-var-generator-svg/",
+      },
+      {
+        name: "AHF",
+        path: "/aktif-harmonik-filtre-ahf/",
+      },
+    ],
     category: "correction",
     menuCategory: "compensation",
     role: "Reaktif güç, harmonik ve faz dengesizliği problemlerinin aktif olarak iyileştirilmesi",
@@ -274,6 +362,16 @@ export const products: Product[] = [
   {
     id: "kondansator",
     name: "Kondansatörler",
+    seriesPages: [
+      {
+        name: "Tek Fazlı Serisi",
+        path: "/tek-fazli-kondansatorler-495/",
+      },
+      {
+        name: "Üç Fazlı Serisi",
+        path: "/3-fazli-kondansatorler/",
+      },
+    ],
     category: "correction",
     menuCategory: "compensation",
     role: "Endüktif reaktif gücün kompanze edilmesi ve güç faktörünün iyileştirilmesi",
@@ -300,6 +398,16 @@ export const products: Product[] = [
   {
     id: "harmonik-filtre-reaktorleri",
     name: "Harmonik Filtre Reaktörleri",
+    seriesPages: [
+      {
+        name: "Tek Fazlı Serisi",
+        path: "/tek-fazli-harmonik-filtreler/",
+      },
+      {
+        name: "Üç Fazlı Serisi",
+        path: "/uc-fazli-harmonik-filtreler/",
+      },
+    ],
     category: "correction",
     menuCategory: "compensation",
     role: "Harmonikli kompanzasyon sistemlerinde kondansatörlerin korunması ve rezonans riskinin azaltılması",
@@ -451,6 +559,20 @@ export const products: Product[] = [
   {
     id: "gateway",
     name: "Gateway (Ağ Geçitleri)",
+    seriesPages: [
+      {
+        name: "ETMO Ethernet",
+        path: "/etmo/",
+      },
+      {
+        name: "GEMO GSM/GPRS",
+        path: "/gemo/",
+      },
+      {
+        name: "Çeviriciler",
+        path: "/rs-usb2-455/",
+      },
+    ],
     category: "communication-energy",
     menuCategory: "energy-management",
     role: "Saha cihazları ile üst seviye ağ ve enerji yönetimi sistemleri arasında haberleşme bağlantısının sağlanması",

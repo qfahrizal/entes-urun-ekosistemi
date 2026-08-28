@@ -17,7 +17,8 @@ export type RelationStatus =
   | "required"
   | "conditional"
   | "optional"
-  | "alternative";
+  | "alternative"
+  | "related";
 
 export type RelationType =
   | "measurement-input"
@@ -35,13 +36,10 @@ export interface Product {
   id: string;
   name: string;
   shortName?: string;
-
   category: ProductCategory;
   menuCategory: MenuCategory;
-
   role: string;
   description: string;
-
   image?: string;
 
   modelPreviews?: {
@@ -52,6 +50,11 @@ export interface Product {
   brochureUrl?: string;
   priceListUrl?: string;
   websiteUrl?: string;
+
+  seriesPages?: {
+    name: string;
+    path: string;
+  }[];
 }
 
 // ==================================================
