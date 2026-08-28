@@ -1116,27 +1116,7 @@ export const relations: Relation[] = [
   // 3. VOLTMETRELER
   // ==================================================
 
-  {
-    id: "voltmetreler-sebeke-analizorleri",
-    sourceProductId: "voltmetreler",
-    targetProductId: "sebeke-analizorleri",
-    type: "measurement-input",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
-
-    sourceTitle: "Kapsamlı Şebeke Ölçümü",
-    targetTitle: "Gerilim Odaklı Ölçüm",
-
-    reason:
-      "Voltmetreler gerilim değerinin temel olarak izlenmesine odaklanırken Şebeke Analizörleri gerilimin yanında akım, güç, enerji ve diğer elektriksel parametrelerin daha kapsamlı izlenmesini sağlar.",
-
-    whenUsed:
-      "Yalnızca gerilim takibinin ötesinde daha kapsamlı şebeke ölçümü gerektiğinde Şebeke Analizörü değerlendirilebilir.",
-
-    technicalNote:
-      "Şebeke Analizörü Voltmetrenin zorunlu devam ürünü değildir; seçim ihtiyaç duyulan ölçüm kapsamına göre yapılmalıdır.",
-  },
 
   {
     id: "voltmetreler-gerilim-koruma-roleleri",
@@ -1190,27 +1170,7 @@ export const relations: Relation[] = [
   // 4. FREKANSMETRELER
   // ==================================================
 
-  {
-    id: "frekansmetreler-sebeke-analizorleri",
-    sourceProductId: "frekansmetreler",
-    targetProductId: "sebeke-analizorleri",
-    type: "measurement-input",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
-
-    sourceTitle: "Kapsamlı Şebeke Ölçümü",
-    targetTitle: "Frekans Odaklı Ölçüm",
-
-    reason:
-      "Frekansmetreler işletme frekansının temel olarak izlenmesine odaklanırken Şebeke Analizörleri frekansın yanında diğer elektriksel ve enerji parametrelerini daha kapsamlı olarak izleyebilir.",
-
-    whenUsed:
-      "Frekans ölçümünün yanında daha kapsamlı şebeke ölçümü gerektiğinde Şebeke Analizörü değerlendirilebilir.",
-
-    technicalNote:
-      "Seçim yalnızca frekans göstergesine mi yoksa daha kapsamlı şebeke izlemeye mi ihtiyaç duyulduğuna göre yapılmalıdır.",
-  },
 
   {
     id: "frekansmetreler-gerilim-koruma-roleleri",

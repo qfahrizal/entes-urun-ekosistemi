@@ -42,7 +42,7 @@ export default function Home() {
         className="absolute inset-0 h-full w-full object-cover object-center"
       >
         <source
-          src="/videos/entes-hero2.mp4"
+          src="/videos/entes-hero3.mp4"
           type="video/mp4"
         />
       </video>
