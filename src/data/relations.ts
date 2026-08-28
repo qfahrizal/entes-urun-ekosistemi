@@ -2878,7 +2878,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "conditional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "Haberleşmeli Zaman Kontrolü",
@@ -2939,8 +2939,8 @@ export const relations: Relation[] = [
     targetProductId: "programlanabilir-zaman-saatleri",
     type: "control",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Takvim Bazlı Programlama",
     targetTitle: "Süre ve Tetikleme Bazlı Kontrol",
@@ -2966,8 +2966,8 @@ export const relations: Relation[] = [
     targetProductId: "astronomik-zaman-roleleri",
     type: "control",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Astronomik Zamanlama",
     targetTitle: "Süre ve Tetikleme Bazlı Kontrol",
@@ -2998,8 +2998,8 @@ export const relations: Relation[] = [
     targetProductId: "programlanabilir-zaman-saatleri",
     type: "control",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Takvim Bazlı Programlama",
     targetTitle: "Temel Süre Bazlı Kontrol",
@@ -3025,8 +3025,8 @@ export const relations: Relation[] = [
     targetProductId: "astronomik-zaman-roleleri",
     type: "control",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Astronomik Zamanlama",
     targetTitle: "Temel Süre Bazlı Kontrol",
@@ -3062,8 +3062,8 @@ export const relations: Relation[] = [
     targetProductId: "motor-faz-koruma-roleleri",
     type: "protection",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Motor ve Faz Odaklı Koruma",
     targetTitle: "Şebeke Gerilim Koruması",
@@ -3089,8 +3089,8 @@ export const relations: Relation[] = [
     targetProductId: "faz-sirasi-rolesi",
     type: "protection",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Özel Faz Sırası Koruması",
     targetTitle: "Geniş Gerilim ve Faz Koruması",
@@ -3235,8 +3235,8 @@ export const relations: Relation[] = [
     targetProductId: "akim-koruma-roleleri",
     type: "protection",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Temel Akım Koruması",
     targetTitle: "Kapsamlı Sekonder Koruma",
@@ -3261,8 +3261,8 @@ export const relations: Relation[] = [
     targetProductId: "motor-faz-koruma-roleleri",
     type: "protection",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Kapsamlı Motor ve Faz Koruması",
     targetTitle: "PTC Termal Koruma",
@@ -3287,8 +3287,8 @@ export const relations: Relation[] = [
     targetProductId: "faz-sirasi-rolesi",
     type: "protection",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Özel Faz Sırası Kontrolü",
     targetTitle: "Kapsamlı Motor ve Faz Koruması",
@@ -3349,8 +3349,8 @@ export const relations: Relation[] = [
     targetProductId: "kumanda-trafolari",
     type: "control",
 
-    sourceStatus: "alternative",
-    targetStatus: "alternative",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "24 VAC Kontrol Beslemesi",
     targetTitle: "12/24 VDC Kontrol Beslemesi",
