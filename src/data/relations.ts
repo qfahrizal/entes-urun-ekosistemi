@@ -193,7 +193,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "Şebeke Ölçüm Kaynağı",
@@ -218,7 +218,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "conditional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Merkezi Veri Toplama",
     targetTitle: "Şebeke Ölçüm Kaynağı",
@@ -243,7 +243,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Enerji İzleme",
     targetTitle: "Şebeke Ölçüm Kaynağı",
@@ -473,7 +473,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "Güç Kalitesi Veri Kaynağı",
@@ -498,7 +498,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Güç Kalitesi İzleme",
     targetTitle: "Güç Kalitesi Veri Kaynağı",
@@ -638,7 +638,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "Enerji Ölçüm Kaynağı",
@@ -663,7 +663,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "conditional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Merkezi Veri Toplama",
     targetTitle: "Enerji Ölçüm Kaynağı",
@@ -688,7 +688,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Enerji İzleme",
     targetTitle: "Enerji Ölçüm Kaynağı",
@@ -832,7 +832,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "Çok Parametreli Ölçüm Kaynağı",
@@ -857,7 +857,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "conditional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Merkezi Veri Toplama",
     targetTitle: "Çok Parametreli Ölçüm Kaynağı",
@@ -882,7 +882,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Ölçüm İzleme",
     targetTitle: "Çok Parametreli Ölçüm Kaynağı",
@@ -1478,7 +1478,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "DC Akım Ölçüm Kaynağı",
@@ -1503,7 +1503,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan DC Akım İzleme",
     targetTitle: "DC Akım Ölçüm Kaynağı",
@@ -1558,7 +1558,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "DC Gerilim Ölçüm Kaynağı",
@@ -1583,7 +1583,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan DC Gerilim İzleme",
     targetTitle: "DC Gerilim Ölçüm Kaynağı",
@@ -1915,7 +1915,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "Kompanzasyon Veri Kaynağı",
@@ -1940,7 +1940,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "conditional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Merkezi Veri Toplama",
     targetTitle: "Kompanzasyon Veri Kaynağı",
@@ -1965,7 +1965,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Kompanzasyon İzleme",
     targetTitle: "Kompanzasyon Veri Kaynağı",
@@ -2152,7 +2152,7 @@ export const relations: Relation[] = [
     type: "communication",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Haberleşme",
     targetTitle: "Güç Kalitesi Veri Kaynağı",
@@ -2177,7 +2177,7 @@ export const relations: Relation[] = [
     type: "data-transfer",
 
     sourceStatus: "optional",
-    targetStatus: "conditional",
+    targetStatus: "related",
 
     sourceTitle: "Uzaktan Güç Kalitesi İzleme",
     targetTitle: "Güç Kalitesi Veri Kaynağı",

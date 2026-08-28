@@ -65,7 +65,7 @@ const statusLabels: Record<
   conditional: "Koşula Bağlı",
   optional: "Opsiyonel",
   alternative: "Alternatif",
-  related: "İlgili Çözüm",
+  related: "İlgili Ürün",
 };
 
 const statusDescriptions: Record<
@@ -85,7 +85,7 @@ const statusDescriptions: Record<
     "Aynı veya benzer ihtiyacın farklı kapsam ya da yöntemle karşılanabildiği alternatif ürün yaklaşımını ifade eder.",
   related:
     "Seçili ürünün alternatifi olmayan ancak aynı sistem veya uygulamada bağlantılı bir ihtiyaca çözüm sunduğu için birlikte değerlendirilebilecek ürünü ifade eder.",
-};
+  };
 
 
 const statusOrder: Record<
