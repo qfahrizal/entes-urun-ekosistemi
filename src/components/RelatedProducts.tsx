@@ -10,6 +10,7 @@ import {
 
 import { products } from "@/data/products";
 import { relations } from "@/data/relations";
+import { productCategories } from "@/data/categories";
 
 import type {
   Product,
@@ -88,7 +89,7 @@ const statusDescriptions: Record<
   };
 
 
-const statusOrder: Record<
+/* const statusOrder: Record<
   RelationStatus,
   number
 > = {
@@ -97,7 +98,7 @@ const statusOrder: Record<
   optional: 2,
   alternative: 3,
   related: 4,
-};
+}; */
 
 
 const statusStyles: Record<
@@ -119,13 +120,38 @@ const statusStyles: Record<
     "border-emerald-200 bg-emerald-50 text-emerald-700",
 };
 
+// ==================================================
+// ENTES ÜRÜN MENÜ SIRASI
+// ==================================================
+
+const productSortIndex =
+  new Map<string, number>();
+
+let productOrderIndex = 0;
+
+for (const category of productCategories) {
+  for (const family of category.families) {
+    if (!family.productId) {
+      continue;
+    }
+
+    productSortIndex.set(
+      family.productId,
+      productOrderIndex
+    );
+
+    productOrderIndex += 1;
+  }
+}
 
 /* ==================================================
    AKIM TRAFOSU ÜRÜN GRUPLARI
 
-   Bir cihaz için birden fazla CT "Gerekli"
-   görünüyorsa kullanıcı tümünü birlikte
-   almak zorunda değildir.
+   Bir cihaz için birden fazla uygun CT
+   seçeneği gösterilebilir.
+
+   Kullanıcı tüm CT tiplerini birlikte
+   kullanmak zorunda değildir.
 
    Uygulamaya uygun CT tipi seçilir.
 ================================================== */
@@ -239,6 +265,12 @@ export default function RelatedProducts({
     setSelectedRelationId(null);
   }, [product.id]);
 
+  useEffect(() => {
+    scrollAreaRef.current?.scrollTo({
+      left: 0,
+      behavior: "smooth",
+    });
+  }, [statusFilter, product.id]);
 
   /* ==================================================
      İLİŞKİLİ ÜRÜNLER
@@ -312,11 +344,28 @@ export default function RelatedProducts({
           );
 
 
-      return items.sort(
-        (a, b) =>
-          statusOrder[a.status] -
-          statusOrder[b.status]
-      );
+      return items.sort((a, b) => {
+        const aOrder =
+          productSortIndex.get(
+            a.product.id
+          ) ??
+          Number.MAX_SAFE_INTEGER;
+
+        const bOrder =
+          productSortIndex.get(
+            b.product.id
+          ) ??
+          Number.MAX_SAFE_INTEGER;
+
+        if (aOrder !== bOrder) {
+          return aOrder - bOrder;
+        }
+
+        return a.product.name.localeCompare(
+          b.product.name,
+          "tr"
+        );
+      });
     }, [product.id]);
 
 
@@ -383,12 +432,14 @@ export default function RelatedProducts({
      AKIM TRAFOSU SEÇİM KONTROLÜ
   ================================================== */
 
-  const requiredCurrentTransformerCount =
+  const currentTransformerChoiceCount =
     useMemo(() => {
       return relatedItems.filter(
         (item) =>
-          item.status ===
-            "required" &&
+          (
+            item.status === "required" ||
+            item.status === "conditional"
+          ) &&
           currentTransformerProductIds.has(
             item.product.id
           )
@@ -397,7 +448,7 @@ export default function RelatedProducts({
 
 
   const hasCurrentTransformerChoice =
-    requiredCurrentTransformerCount > 1;
+    currentTransformerChoiceCount > 1;
 
 
   /* ==================================================
@@ -421,12 +472,58 @@ export default function RelatedProducts({
   const scroll = (
     direction: "left" | "right"
   ) => {
-    scrollAreaRef.current?.scrollBy({
-      left:
-        direction === "left"
-          ? -500
-          : 500,
+    const container =
+      scrollAreaRef.current;
 
+    if (!container) {
+      return;
+    }
+
+    const maxScroll =
+      container.scrollWidth -
+      container.clientWidth;
+
+    const step = Math.max(
+      280,
+      container.clientWidth * 0.8
+    );
+
+    const nearStart =
+      container.scrollLeft <= 8;
+
+    const nearEnd =
+      container.scrollLeft >=
+      maxScroll - 8;
+
+    if (direction === "right") {
+      if (nearEnd) {
+        container.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+
+        return;
+      }
+
+      container.scrollBy({
+        left: step,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    if (nearStart) {
+      container.scrollTo({
+        left: maxScroll,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    container.scrollBy({
+      left: -step,
       behavior: "smooth",
     });
   };
@@ -467,44 +564,6 @@ export default function RelatedProducts({
             </div>
 
           </div>
-
-
-          {/* ==================================================
-              CAROUSEL OKLARI
-          ================================================== */}
-
-          {filteredItems.length >
-            0 && (
-
-            <div className="hidden gap-2 sm:flex">
-
-              <button
-                type="button"
-                onClick={() =>
-                  scroll("left")
-                }
-                aria-label="Önceki ilişkili ürünler"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
-              >
-                ←
-              </button>
-
-
-              <button
-                type="button"
-                onClick={() =>
-                  scroll("right")
-                }
-                aria-label="Sonraki ilişkili ürünler"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
-              >
-                →
-              </button>
-
-            </div>
-
-          )}
-
         </div>
 
 
@@ -516,34 +575,31 @@ export default function RelatedProducts({
           0 && (
           <>
 
-            <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+            <div className="mt-6 flex items-center gap-3">
 
+              {/* FİLTRELER */}
 
-              {/* TÜMÜ */}
+              <div className="min-w-0 flex flex-1 gap-2 overflow-x-auto pb-1">
 
-              <button
-                type="button"
-                onClick={() =>
-                  setStatusFilter(
-                    "all"
-                  )
-                }
-                className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition ${
-                  statusFilter ===
-                  "all"
-                    ? "border-entes-accent bg-entes-accent text-black"
-                    : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
-                }`}
-              >
-                Tümü (
-                {relatedItems.length})
-              </button>
+                {/* TÜMÜ */}
 
+                <button
+                  type="button"
+                  onClick={() =>
+                    setStatusFilter("all")
+                  }
+                  className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition ${
+                    statusFilter === "all"
+                      ? "border-entes-accent bg-entes-accent text-black"
+                      : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
+                  }`}
+                >
+                  Tümü ({relatedItems.length})
+                </button>
 
-              {/* STATUS FİLTRELERİ */}
+                {/* STATUS FİLTRELERİ */}
 
-              {statusKeys.map(
-                (status) => {
+                {statusKeys.map((status) => {
                   if (
                     !availableStatuses.has(
                       status
@@ -552,38 +608,54 @@ export default function RelatedProducts({
                     return null;
                   }
 
-
                   return (
                     <button
                       key={status}
                       type="button"
                       onClick={() =>
-                        setStatusFilter(
-                          status
-                        )
+                        setStatusFilter(status)
                       }
                       className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition ${
-                        statusFilter ===
-                        status
-                          ? statusStyles[
-                              status
-                            ]
+                        statusFilter === status
+                          ? statusStyles[status]
                           : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
                       }`}
                     >
-                      {
-                        statusLabels[
-                          status
-                        ]
-                      }{" "}
-                      (
-                      {getStatusCount(
-                        status
-                      )}
-                      )
+                      {statusLabels[status]}{" "}
+                      ({getStatusCount(status)})
                     </button>
                   );
-                }
+                })}
+              </div>
+
+              {/* CAROUSEL OKLARI */}
+
+              {filteredItems.length > 0 && (
+                <div className="hidden shrink-0 gap-2 sm:flex">
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      scroll("left")
+                    }
+                    aria-label="Önceki ilişkili ürünler"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
+                  >
+                    ←
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      scroll("right")
+                    }
+                    aria-label="Sonraki ilişkili ürünler"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
+                  >
+                    →
+                  </button>
+
+                </div>
               )}
 
             </div>
@@ -653,11 +725,10 @@ export default function RelatedProducts({
 
 
                     <p className="mt-1 text-[13px] leading-6 text-entes-text-muted sm:text-sm">
-                      Birden fazla akım
-                      trafosu gerekli olarak
-                      gösterilebilir.
-                      Uygulamaya uygun tip
-                      seçilir; tüm akım
+                      Bu uygulama için birden
+                      fazla akım trafosu seçeneği
+                      gösterilebilir. Uygulamaya
+                      uygun tip seçilir; tüm akım
                       trafosu ürün gruplarının
                       birlikte kullanılması
                       gerekmez.
@@ -699,7 +770,10 @@ export default function RelatedProducts({
                 }) => {
                   const showCtChoice =
                     hasCurrentTransformerChoice &&
-                    status === "required" &&
+                    (
+                      status === "required" ||
+                      status === "conditional"
+                    ) &&
                     currentTransformerProductIds.has(
                       relatedProduct.id
                     );
@@ -1029,8 +1103,12 @@ export default function RelatedProducts({
 
 
               {hasCurrentTransformerChoice &&
-                selectedItem.status ===
-                  "required" &&
+                (
+                  selectedItem.status ===
+                    "required" ||
+                  selectedItem.status ===
+                    "conditional"
+                ) &&
                 currentTransformerProductIds.has(
                   selectedItem.product.id
                 ) && (

@@ -19,7 +19,7 @@ export default function FloatingSupport() {
         ================================================== */}
 
         <div className="mb-2 rounded-full border border-entes-border bg-white px-4 py-2 text-xs font-semibold text-entes-text shadow-md transition-all duration-200 group-hover:-translate-y-1 group-hover:border-entes-accent group-hover:bg-entes-accent sm:text-sm">
-          Bizi Arayın
+          İletişim
         </div>
 
 
