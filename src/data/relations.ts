@@ -23,7 +23,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Şebeke Analizi",
     targetTitle: "Standart AG Akım Ölçümü",
@@ -45,7 +45,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Şebeke Analizi",
     targetTitle: "Retrofit Akım Ölçümü",
@@ -67,7 +67,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Şebeke Analizi",
     targetTitle: "Clamp Tip Retrofit Ölçüm",
@@ -89,7 +89,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Şebeke Analizi",
     targetTitle: "Kompakt Üç Faz Akım Ölçümü",
@@ -111,7 +111,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "OG Şebeke Analizi",
     targetTitle: "OG Akım Ölçümü",
@@ -1527,8 +1527,8 @@ export const relations: Relation[] = [
     targetProductId: "dc-voltmetreler",
     type: "measurement-input",
 
-    sourceStatus: "optional",
-    targetStatus: "optional",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "DC Gerilim İzleme",
     targetTitle: "DC Akım İzleme",
@@ -1618,7 +1618,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Kompanzasyon Kontrolü",
     targetTitle: "Akım Ölçüm Girişi",
@@ -1640,7 +1640,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Kompanzasyon Kontrolü",
     targetTitle: "Akım Ölçüm Girişi",
@@ -1662,7 +1662,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Kompanzasyon Kontrolü",
     targetTitle: "Akım Ölçüm Girişi",
@@ -1684,7 +1684,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Üç Faz Kompanzasyon Kontrolü",
     targetTitle: "Üç Faz Akım Ölçümü",
@@ -1706,7 +1706,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "OG Kompanzasyon Kontrolü",
     targetTitle: "OG Akım Ölçümü",
@@ -2029,7 +2029,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Aktif Güç Kalitesi Çözümü",
     targetTitle: "Akım Referansı",
@@ -2051,7 +2051,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Aktif Güç Kalitesi Çözümü",
     targetTitle: "Akım Referansı",
@@ -2073,7 +2073,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Aktif Güç Kalitesi Çözümü",
     targetTitle: "Akım Referansı",
@@ -2095,7 +2095,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "related",
-    targetStatus: "required",
+    targetStatus: "conditional",
 
     sourceTitle: "Üç Faz Aktif Güç Kalitesi Çözümü",
     targetTitle: "Üç Faz Akım Referansı",
@@ -3115,8 +3115,8 @@ export const relations: Relation[] = [
     targetProductId: "surge-koruma",
     type: "protection",
 
-    sourceStatus: "conditional",
-    targetStatus: "conditional",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Darbe Gerilimi Koruması",
     targetTitle: "Şebeke Gerilim Koruması",
@@ -3319,8 +3319,8 @@ export const relations: Relation[] = [
     targetProductId: "motor-faz-koruma-roleleri",
     type: "protection",
 
-    sourceStatus: "optional",
-    targetStatus: "optional",
+    sourceStatus: "related",
+    targetStatus: "related",
 
     sourceTitle: "Pompa Motoru Koruması",
     targetTitle: "Seviyeye Göre Pompa Kontrolü",
