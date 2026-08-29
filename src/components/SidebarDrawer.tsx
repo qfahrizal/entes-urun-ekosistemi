@@ -8,11 +8,104 @@ import {
 
 import { productCategories } from "@/data/categories";
 import { products } from "@/data/products";
+import { productSearchAliases } from "@/data/productSearchAliases";
 
 import type {
   MenuCategory,
   Product,
 } from "@/types/ecosystem";
+
+/* ==================================================
+   ARAMA NORMALİZASYONU
+================================================== */
+
+function normalizeSearchText(
+  value: string
+) {
+  return value
+    .toLocaleLowerCase("tr-TR")
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .replace(/ı/g, "i")
+    .replace(/ϕ|φ/g, "phi")
+    .replace(
+      /[^a-z0-9]+/g,
+      " "
+    )
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+
+function compactSearchText(
+  value: string
+) {
+  return normalizeSearchText(
+    value
+  ).replace(/\s+/g, "");
+}
+
+
+/*
+ * Örnek:
+ *
+ * ENT.SRS1
+ * ent-srs1
+ * ent srs1
+ * entsrs1
+ *
+ * aynı arama değerine dönüşebilir.
+ */
+function aliasMatchesSearch(
+  alias: string,
+  search: string
+) {
+  const aliasCompact =
+    compactSearchText(alias);
+
+  const searchCompact =
+    compactSearchText(search);
+
+  if (
+    !aliasCompact ||
+    !searchCompact
+  ) {
+    return false;
+  }
+
+  /* Tam alias eşleşmesi */
+
+  if (
+    aliasCompact ===
+    searchCompact
+  ) {
+    return true;
+  }
+
+  /*
+   * MPR-4 yazıldığında MPR,
+   * GKRC-01 yazıldığında GKRC
+   * gibi seri/model uzantılarını
+   * da yakala.
+   *
+   * "ent" çok genel olduğu için
+   * prefix aramasında kullanılmaz.
+   */
+  if (
+    aliasCompact.length >= 3 &&
+    aliasCompact !== "ent" &&
+    searchCompact.startsWith(
+      aliasCompact
+    )
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 type SidebarDrawerProps = {
   open: boolean;
@@ -65,34 +158,159 @@ export default function SidebarDrawer({
     setSearchTerm("");
   }, [open, requestedCategory]);
 
-  const normalizedSearch = searchTerm
-    .toLocaleLowerCase("tr-TR")
-    .trim();
+  const normalizedSearch =
+    normalizeSearchText(
+      searchTerm
+    );
 
   /*
    * Arama sırasında kategori yapısını kaldırıp
    * eşleşen ürün gruplarını doğrudan göster.
    */
-  const searchResults = useMemo(() => {
-    if (!normalizedSearch) {
-      return [];
-    }
 
-    return productCategories.flatMap(
-      (category) =>
-        category.families
-          .filter((family) =>
-            family.label
-              .toLocaleLowerCase("tr-TR")
-              .includes(normalizedSearch)
-          )
-          .map((family) => ({
-            ...family,
-            categoryLabel:
-              category.label,
-          }))
-    );
-  }, [normalizedSearch]);
+  const searchResults =
+    useMemo(() => {
+      if (!normalizedSearch) {
+        return [];
+      }
+
+      const results: Array<{
+        id: string;
+        label: string;
+        productId?: string;
+        categoryLabel: string;
+        matchedAlias?: string;
+        score: number;
+        categoryOrder: number;
+        familyOrder: number;
+      }> = [];
+
+      productCategories.forEach(
+        (
+          category,
+          categoryIndex
+        ) => {
+          category.families.forEach(
+            (
+              family,
+              familyIndex
+            ) => {
+              const normalizedLabel =
+                normalizeSearchText(
+                  family.label
+                );
+
+              const labelMatches =
+                normalizedLabel.includes(
+                  normalizedSearch
+                );
+
+              const aliases =
+                family.productId
+                  ? productSearchAliases[
+                      family.productId
+                    ] ?? []
+                  : [];
+
+              const matchedAlias =
+                aliases.find(
+                  (alias) =>
+                    aliasMatchesSearch(
+                      alias,
+                      normalizedSearch
+                    )
+                );
+
+              if (
+                !labelMatches &&
+                !matchedAlias
+              ) {
+                return;
+              }
+
+              /*
+              * Sıralama:
+              *
+              * 0 → alias tam eşleşmesi
+              * 1 → alias / model prefix eşleşmesi
+              * 2 → ürün adı baştan eşleşiyor
+              * 3 → ürün adı içinde eşleşiyor
+              */
+
+              let score = 3;
+
+              if (matchedAlias) {
+                const aliasCompact =
+                  compactSearchText(
+                    matchedAlias
+                  );
+
+                const queryCompact =
+                  compactSearchText(
+                    normalizedSearch
+                  );
+
+                score =
+                  aliasCompact ===
+                  queryCompact
+                    ? 0
+                    : 1;
+              } else if (
+                normalizedLabel.startsWith(
+                  normalizedSearch
+                )
+              ) {
+                score = 2;
+              }
+
+              results.push({
+                ...family,
+
+                categoryLabel:
+                  category.label,
+
+                matchedAlias,
+
+                score,
+
+                categoryOrder:
+                  categoryIndex,
+
+                familyOrder:
+                  familyIndex,
+              });
+            }
+          );
+        }
+      );
+
+      return results.sort(
+        (a, b) => {
+          if (
+            a.score !== b.score
+          ) {
+            return (
+              a.score - b.score
+            );
+          }
+
+          if (
+            a.categoryOrder !==
+            b.categoryOrder
+          ) {
+            return (
+              a.categoryOrder -
+              b.categoryOrder
+            );
+          }
+
+          return (
+            a.familyOrder -
+            b.familyOrder
+          );
+        }
+      );
+    }, [normalizedSearch]);
 
   const handleFamilyClick = (
     productId?: string
@@ -184,7 +402,7 @@ export default function SidebarDrawer({
                   event.target.value
                 )
               }
-              placeholder="Ürün veya ürün ailesi ara..."
+              placeholder="Ürün, seri veya ürün kodu ara..."
               className="w-full rounded-xl border border-entes-border bg-white px-4 py-3 text-sm outline-none transition focus:border-entes-accent focus:ring-2 focus:ring-entes-accent/20"
             />
           </div>
@@ -274,6 +492,12 @@ export default function SidebarDrawer({
                                   family.categoryLabel
                                 }
                               </p>
+                              {family.matchedAlias && (
+                                <span className="mt-2 inline-flex rounded-full bg-entes-accent/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-entes-text">
+                                  Eşleşme:{" "}
+                                  {family.matchedAlias}
+                                </span>
+                              )}
                             </div>
 
                             {available && (
