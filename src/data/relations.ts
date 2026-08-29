@@ -22,7 +22,7 @@ export const relations: Relation[] = [
     targetProductId: "sebeke-analizorleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Şebeke Analizi",
@@ -44,7 +44,7 @@ export const relations: Relation[] = [
     targetProductId: "sebeke-analizorleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Şebeke Analizi",
@@ -66,7 +66,7 @@ export const relations: Relation[] = [
     targetProductId: "sebeke-analizorleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Şebeke Analizi",
@@ -88,7 +88,7 @@ export const relations: Relation[] = [
     targetProductId: "sebeke-analizorleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Şebeke Analizi",
@@ -110,7 +110,7 @@ export const relations: Relation[] = [
     targetProductId: "sebeke-analizorleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "OG Şebeke Analizi",
@@ -277,7 +277,7 @@ export const relations: Relation[] = [
     targetProductId: "emk",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç Kalitesi Analizi",
@@ -299,7 +299,7 @@ export const relations: Relation[] = [
     targetProductId: "emk",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç Kalitesi Analizi",
@@ -321,7 +321,7 @@ export const relations: Relation[] = [
     targetProductId: "emk",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç Kalitesi Analizi",
@@ -343,7 +343,7 @@ export const relations: Relation[] = [
     targetProductId: "emk",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Üç Faz Güç Kalitesi Analizi",
@@ -365,7 +365,7 @@ export const relations: Relation[] = [
     targetProductId: "emk",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "OG Güç Kalitesi Analizi",
@@ -532,7 +532,7 @@ export const relations: Relation[] = [
     targetProductId: "guc-enerji-olcer",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç ve Enerji Ölçümü",
@@ -557,7 +557,7 @@ export const relations: Relation[] = [
     targetProductId: "guc-enerji-olcer",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç ve Enerji Ölçümü",
@@ -582,7 +582,7 @@ export const relations: Relation[] = [
     targetProductId: "guc-enerji-olcer",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç ve Enerji Ölçümü",
@@ -607,7 +607,7 @@ export const relations: Relation[] = [
     targetProductId: "guc-enerji-olcer",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Üç Faz Güç ve Enerji Ölçümü",
@@ -726,7 +726,7 @@ export const relations: Relation[] = [
     targetProductId: "multimetre",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Çok Parametreli Ölçüm",
@@ -751,7 +751,7 @@ export const relations: Relation[] = [
     targetProductId: "multimetre",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Çok Parametreli Ölçüm",
@@ -776,7 +776,7 @@ export const relations: Relation[] = [
     targetProductId: "multimetre",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Çok Parametreli Ölçüm",
@@ -801,7 +801,7 @@ export const relations: Relation[] = [
     targetProductId: "multimetre",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Üç Faz Çok Parametreli Ölçüm",
@@ -1004,7 +1004,7 @@ export const relations: Relation[] = [
     targetProductId: "ampermetreler",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Akım Gösterimi",
@@ -1029,7 +1029,7 @@ export const relations: Relation[] = [
     targetProductId: "ampermetreler",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Akım Gösterimi",
@@ -1051,7 +1051,7 @@ export const relations: Relation[] = [
     targetProductId: "ampermetreler",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Akım Gösterimi",
@@ -1073,7 +1073,7 @@ export const relations: Relation[] = [
     targetProductId: "ampermetreler",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Üç Faz Akım Gösterimi",
@@ -1208,7 +1208,7 @@ export const relations: Relation[] = [
     targetProductId: "cosfimetreler",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç Faktörü Ölçümü",
@@ -1230,7 +1230,7 @@ export const relations: Relation[] = [
     targetProductId: "cosfimetreler",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç Faktörü Ölçümü",
@@ -1252,7 +1252,7 @@ export const relations: Relation[] = [
     targetProductId: "cosfimetreler",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Güç Faktörü Ölçümü",
@@ -1354,7 +1354,7 @@ export const relations: Relation[] = [
     targetProductId: "akim-transduserleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Analog Akım Dönüşümü",
@@ -1376,7 +1376,7 @@ export const relations: Relation[] = [
     targetProductId: "akim-transduserleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Analog Akım Dönüşümü",
@@ -1398,7 +1398,7 @@ export const relations: Relation[] = [
     targetProductId: "akim-transduserleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Analog Akım Dönüşümü",
@@ -1420,7 +1420,7 @@ export const relations: Relation[] = [
     targetProductId: "akim-transduserleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Üç Faz Analog Akım Ölçümü",
@@ -1442,7 +1442,7 @@ export const relations: Relation[] = [
     targetProductId: "akim-transduserleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "OG Analog Akım Ölçümü",
@@ -1617,7 +1617,7 @@ export const relations: Relation[] = [
     targetProductId: "reaktif-guc-kontrol-rolesi",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Kompanzasyon Kontrolü",
@@ -1639,7 +1639,7 @@ export const relations: Relation[] = [
     targetProductId: "reaktif-guc-kontrol-rolesi",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Kompanzasyon Kontrolü",
@@ -1661,7 +1661,7 @@ export const relations: Relation[] = [
     targetProductId: "reaktif-guc-kontrol-rolesi",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Kompanzasyon Kontrolü",
@@ -1683,7 +1683,7 @@ export const relations: Relation[] = [
     targetProductId: "reaktif-guc-kontrol-rolesi",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Üç Faz Kompanzasyon Kontrolü",
@@ -1705,7 +1705,7 @@ export const relations: Relation[] = [
     targetProductId: "reaktif-guc-kontrol-rolesi",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "OG Kompanzasyon Kontrolü",
@@ -2028,7 +2028,7 @@ export const relations: Relation[] = [
     targetProductId: "svg-ahf",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Aktif Güç Kalitesi Çözümü",
@@ -2050,7 +2050,7 @@ export const relations: Relation[] = [
     targetProductId: "svg-ahf",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Aktif Güç Kalitesi Çözümü",
@@ -2072,7 +2072,7 @@ export const relations: Relation[] = [
     targetProductId: "svg-ahf",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Aktif Güç Kalitesi Çözümü",
@@ -2094,7 +2094,7 @@ export const relations: Relation[] = [
     targetProductId: "svg-ahf",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "required",
 
     sourceTitle: "Üç Faz Aktif Güç Kalitesi Çözümü",
@@ -2210,7 +2210,7 @@ export const relations: Relation[] = [
     targetProductId: "svc-urunleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Dinamik Kompanzasyon",
@@ -2235,7 +2235,7 @@ export const relations: Relation[] = [
     targetProductId: "svc-urunleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Dinamik Kompanzasyon",
@@ -2260,7 +2260,7 @@ export const relations: Relation[] = [
     targetProductId: "svc-urunleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Dinamik Kompanzasyon",
@@ -2285,7 +2285,7 @@ export const relations: Relation[] = [
     targetProductId: "svc-urunleri",
     type: "measurement-input",
 
-    sourceStatus: "optional",
+    sourceStatus: "related",
     targetStatus: "conditional",
 
     sourceTitle: "Üç Faz Dinamik Kompanzasyon",
@@ -3149,7 +3149,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "conditional",
-    targetStatus: "optional",
+    targetStatus: "related",
 
     sourceTitle: "X/5A Akım Ölçüm Girişi",
     targetTitle: "Akım Koruması",
@@ -3178,7 +3178,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "conditional",
-    targetStatus: "optional",
+    targetStatus: "related",
 
     sourceTitle: "Ayrılabilir Akım Ölçüm Girişi",
     targetTitle: "Akım Koruması",
@@ -3207,7 +3207,7 @@ export const relations: Relation[] = [
     type: "measurement-input",
 
     sourceStatus: "conditional",
-    targetStatus: "optional",
+    targetStatus: "related",
 
     sourceTitle: "Clamp Tip Akım Ölçüm Girişi",
     targetTitle: "Akım Koruması",
