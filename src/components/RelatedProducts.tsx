@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 
+import { productCategories } from "@/data/categories";
 import { products } from "@/data/products";
 import { relations } from "@/data/relations";
 
@@ -68,6 +69,7 @@ const statusLabels: Record<
   related: "İlgili Ürün",
 };
 
+
 const statusDescriptions: Record<
   RelationStatus,
   string
@@ -83,20 +85,9 @@ const statusDescriptions: Record<
 
   alternative:
     "Aynı veya benzer ihtiyacın farklı kapsam ya da yöntemle karşılanabildiği alternatif ürün yaklaşımını ifade eder.",
+
   related:
     "Seçili ürünün alternatifi olmayan ancak aynı sistem veya uygulamada bağlantılı bir ihtiyaca çözüm sunduğu için birlikte değerlendirilebilecek ürünü ifade eder.",
-  };
-
-
-const statusOrder: Record<
-  RelationStatus,
-  number
-> = {
-  required: 0,
-  conditional: 1,
-  optional: 2,
-  alternative: 3,
-  related: 4,
 };
 
 
@@ -115,17 +106,62 @@ const statusStyles: Record<
 
   alternative:
     "border-violet-200 bg-violet-50 text-violet-700",
+
   related:
     "border-emerald-200 bg-emerald-50 text-emerald-700",
 };
 
 
 /* ==================================================
+   ENTES ANA KATEGORİ SIRASI
+================================================== */
+
+const menuCategoryOrder: Record<
+  string,
+  number
+> = {
+  "power-quality": 0,
+  measurement: 1,
+  compensation: 2,
+  "energy-management": 3,
+  "protection-control": 4,
+  "current-transformers": 5,
+};
+
+
+/* ==================================================
+   ENTES ÜRÜN MENÜ SIRASI
+================================================== */
+
+const productSortIndex =
+  new Map<string, number>();
+
+let productOrderIndex = 0;
+
+for (const category of productCategories) {
+  for (const family of category.families) {
+    if (!family.productId) {
+      continue;
+    }
+
+    productSortIndex.set(
+      family.productId,
+      productOrderIndex
+    );
+
+    productOrderIndex += 1;
+  }
+}
+
+
+/* ==================================================
    AKIM TRAFOSU ÜRÜN GRUPLARI
 
-   Bir cihaz için birden fazla CT "Gerekli"
-   görünüyorsa kullanıcı tümünü birlikte
-   almak zorunda değildir.
+   Bir cihaz için birden fazla uygun CT
+   seçeneği gösterilebilir.
+
+   Kullanıcı tüm CT tiplerini birlikte
+   kullanmak zorunda değildir.
 
    Uygulamaya uygun CT tipi seçilir.
 ================================================== */
@@ -143,16 +179,6 @@ const currentTransformerProductIds =
 /* ==================================================
    YÖN BAZLI RELATION HELPER'LARI
 ================================================== */
-
-/*
- * Seçili ürün relation'ın source tarafındaysa
- * sourceStatus kullanılır.
- *
- * Target tarafındaysa targetStatus kullanılır.
- *
- * Eski kayıt desteği için status fallback'i
- * bırakılmıştır.
- */
 
 function getRelationStatus(
   relation: Relation,
@@ -177,10 +203,6 @@ function getRelationStatus(
   );
 }
 
-
-/*
- * İlişki başlığı da yön bazlıdır.
- */
 
 function getRelationTitle(
   relation: Relation,
@@ -238,6 +260,14 @@ export default function RelatedProducts({
     setStatusFilter("all");
     setSelectedRelationId(null);
   }, [product.id]);
+
+
+  useEffect(() => {
+    scrollAreaRef.current?.scrollTo({
+      left: 0,
+      behavior: "smooth",
+    });
+  }, [statusFilter, product.id]);
 
 
   /* ==================================================
@@ -312,11 +342,66 @@ export default function RelatedProducts({
           );
 
 
-      return items.sort(
-        (a, b) =>
-          statusOrder[a.status] -
-          statusOrder[b.status]
-      );
+      /*
+       * Önce ENTES ana kategori sırası,
+       * sonra kategori içindeki ürün sırası.
+       *
+       * Güç Kalitesi & Enerji
+       * → Ölçme
+       * → Kompanzasyon
+       * → Enerji Yönetimi
+       * → Koruma & Kontrol
+       * → Akım Trafoları
+       */
+
+      return items.sort((a, b) => {
+        const aCategoryOrder =
+          menuCategoryOrder[
+            a.product.menuCategory
+          ] ??
+          Number.MAX_SAFE_INTEGER;
+
+        const bCategoryOrder =
+          menuCategoryOrder[
+            b.product.menuCategory
+          ] ??
+          Number.MAX_SAFE_INTEGER;
+
+
+        if (
+          aCategoryOrder !==
+          bCategoryOrder
+        ) {
+          return (
+            aCategoryOrder -
+            bCategoryOrder
+          );
+        }
+
+
+        const aOrder =
+          productSortIndex.get(
+            a.product.id
+          ) ??
+          Number.MAX_SAFE_INTEGER;
+
+        const bOrder =
+          productSortIndex.get(
+            b.product.id
+          ) ??
+          Number.MAX_SAFE_INTEGER;
+
+
+        if (aOrder !== bOrder) {
+          return aOrder - bOrder;
+        }
+
+
+        return a.product.name.localeCompare(
+          b.product.name,
+          "tr"
+        );
+      });
     }, [product.id]);
 
 
@@ -381,14 +466,21 @@ export default function RelatedProducts({
 
   /* ==================================================
      AKIM TRAFOSU SEÇİM KONTROLÜ
+
+     Required veya Conditional CT seçeneklerinin
+     birden fazlası varsa özel seçim notu göster.
   ================================================== */
 
-  const requiredCurrentTransformerCount =
+  const currentTransformerChoiceCount =
     useMemo(() => {
       return relatedItems.filter(
         (item) =>
-          item.status ===
-            "required" &&
+          (
+            item.status ===
+              "required" ||
+            item.status ===
+              "conditional"
+          ) &&
           currentTransformerProductIds.has(
             item.product.id
           )
@@ -397,7 +489,7 @@ export default function RelatedProducts({
 
 
   const hasCurrentTransformerChoice =
-    requiredCurrentTransformerCount > 1;
+    currentTransformerChoiceCount > 1;
 
 
   /* ==================================================
@@ -416,17 +508,79 @@ export default function RelatedProducts({
 
   /* ==================================================
      CAROUSEL
+
+     Sağda sona gelindiğinde başa,
+     solda başa gelindiğinde sona döner.
   ================================================== */
 
   const scroll = (
     direction: "left" | "right"
   ) => {
-    scrollAreaRef.current?.scrollBy({
-      left:
-        direction === "left"
-          ? -500
-          : 500,
+    const container =
+      scrollAreaRef.current;
 
+    if (!container) {
+      return;
+    }
+
+
+    const maxScroll =
+      container.scrollWidth -
+      container.clientWidth;
+
+
+    if (maxScroll <= 0) {
+      return;
+    }
+
+
+    const step = Math.max(
+      280,
+      container.clientWidth * 0.8
+    );
+
+
+    const nearStart =
+      container.scrollLeft <= 8;
+
+
+    const nearEnd =
+      container.scrollLeft >=
+      maxScroll - 8;
+
+
+    if (direction === "right") {
+      if (nearEnd) {
+        container.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+
+        return;
+      }
+
+
+      container.scrollBy({
+        left: step,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+
+    if (nearStart) {
+      container.scrollTo({
+        left: maxScroll,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+
+    container.scrollBy({
+      left: -step,
       behavior: "smooth",
     });
   };
@@ -450,100 +604,60 @@ export default function RelatedProducts({
             BAŞLIK
         ================================================== */}
 
-        <div className="mt-8 sm:mt-12 flex items-end justify-between gap-4">
+        <div className="mt-8 sm:mt-12">
 
-          <div>
+          <div className="flex flex-wrap items-center gap-5">
 
-            <div className="flex flex-wrap items-center gap-5">
+            <h2 className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-entes-text sm:text-[30px]">
+              İlişkili Ürünler
+            </h2>
 
-              <h2 className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-entes-text sm:text-[30px]">
-                İlişkili Ürünler
-              </h2>
 
-              <span className="rounded-full bg-entes-accent/20 px-3 py-1 text-xs font-bold text-entes-text">
-                {relatedItems.length}
-              </span>
-
-            </div>
+            <span className="rounded-full bg-entes-accent/20 px-3 py-1 text-xs font-bold text-entes-text">
+              {relatedItems.length}
+            </span>
 
           </div>
-
-
-          {/* ==================================================
-              CAROUSEL OKLARI
-          ================================================== */}
-
-          {filteredItems.length >
-            0 && (
-
-            <div className="hidden gap-2 sm:flex">
-
-              <button
-                type="button"
-                onClick={() =>
-                  scroll("left")
-                }
-                aria-label="Önceki ilişkili ürünler"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
-              >
-                ←
-              </button>
-
-
-              <button
-                type="button"
-                onClick={() =>
-                  scroll("right")
-                }
-                aria-label="Sonraki ilişkili ürünler"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
-              >
-                →
-              </button>
-
-            </div>
-
-          )}
 
         </div>
 
 
         {/* ==================================================
-            ÖNERİ SEVİYESİ FİLTRELERİ
+            ÖNERİ SEVİYESİ FİLTRELERİ + CAROUSEL OKLARI
         ================================================== */}
 
         {relatedItems.length >
           0 && (
           <>
 
-            <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+            <div className="mt-4 flex items-center gap-3 sm:mt-5">
+
+              {/* ==================================================
+                  FİLTRELER
+              ================================================== */}
+
+              <div className="min-w-0 flex flex-1 gap-2 overflow-x-auto pb-1">
+
+                {/* TÜMÜ */}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setStatusFilter("all")
+                  }
+                  className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition sm:text-sm ${
+                    statusFilter === "all"
+                      ? "border-entes-accent bg-entes-accent text-black"
+                      : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
+                  }`}
+                >
+                  Tümü ({relatedItems.length})
+                </button>
 
 
-              {/* TÜMÜ */}
+                {/* STATUS FİLTRELERİ */}
 
-              <button
-                type="button"
-                onClick={() =>
-                  setStatusFilter(
-                    "all"
-                  )
-                }
-                className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition ${
-                  statusFilter ===
-                  "all"
-                    ? "border-entes-accent bg-entes-accent text-black"
-                    : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
-                }`}
-              >
-                Tümü (
-                {relatedItems.length})
-              </button>
-
-
-              {/* STATUS FİLTRELERİ */}
-
-              {statusKeys.map(
-                (status) => {
+                {statusKeys.map((status) => {
                   if (
                     !availableStatuses.has(
                       status
@@ -558,32 +672,54 @@ export default function RelatedProducts({
                       key={status}
                       type="button"
                       onClick={() =>
-                        setStatusFilter(
-                          status
-                        )
+                        setStatusFilter(status)
                       }
-                      className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition ${
-                        statusFilter ===
-                        status
-                          ? statusStyles[
-                              status
-                            ]
+                      className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition sm:text-sm ${
+                        statusFilter === status
+                          ? statusStyles[status]
                           : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
                       }`}
                     >
-                      {
-                        statusLabels[
-                          status
-                        ]
-                      }{" "}
-                      (
-                      {getStatusCount(
-                        status
-                      )}
-                      )
+                      {statusLabels[status]}{" "}
+                      ({getStatusCount(status)})
                     </button>
                   );
-                }
+                })}
+
+              </div>
+
+
+              {/* ==================================================
+                  CAROUSEL OKLARI
+              ================================================== */}
+
+              {filteredItems.length > 0 && (
+                <div className="hidden shrink-0 gap-2 sm:flex">
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      scroll("left")
+                    }
+                    aria-label="Önceki ilişkili ürünler"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
+                  >
+                    ←
+                  </button>
+
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      scroll("right")
+                    }
+                    aria-label="Sonraki ilişkili ürünler"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
+                  >
+                    →
+                  </button>
+
+                </div>
               )}
 
             </div>
@@ -653,14 +789,12 @@ export default function RelatedProducts({
 
 
                     <p className="mt-1 text-[13px] leading-6 text-entes-text-muted sm:text-sm">
-                      Birden fazla akım
-                      trafosu gerekli olarak
-                      gösterilebilir.
-                      Uygulamaya uygun tip
-                      seçilir; tüm akım
-                      trafosu ürün gruplarının
-                      birlikte kullanılması
-                      gerekmez.
+                      Bu uygulama için birden fazla
+                      akım trafosu seçeneği
+                      gösterilebilir. Uygulamaya uygun
+                      tip seçilir; tüm akım trafosu
+                      ürün gruplarının birlikte
+                      kullanılması gerekmez.
                     </p>
 
                   </div>
@@ -697,9 +831,15 @@ export default function RelatedProducts({
                   status,
                   title,
                 }) => {
+
                   const showCtChoice =
                     hasCurrentTransformerChoice &&
-                    status === "required" &&
+                    (
+                      status ===
+                        "required" ||
+                      status ===
+                        "conditional"
+                    ) &&
                     currentTransformerProductIds.has(
                       relatedProduct.id
                     );
@@ -728,14 +868,16 @@ export default function RelatedProducts({
                       >
 
                         <div className="relative flex h-[150px] items-center justify-center overflow-hidden bg-entes-surface-muted p-5">
+
                           {relatedProduct.image ? (
                             <>
-                              {/* Soft yellow glow */}
                               <div className="pointer-events-none absolute left-1/2 top-1/2 h-[90px] w-[90px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-entes-accent/14 blur-2xl" />
 
                               <div className="pointer-events-none absolute left-1/2 top-1/2 h-[70px] w-[70px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-entes-accent/10 blur-xl" />
 
+
                               <div className="relative z-10 flex items-center justify-center">
+
                                 <Image
                                   src={relatedProduct.image}
                                   alt={relatedProduct.name}
@@ -743,6 +885,7 @@ export default function RelatedProducts({
                                   height={140}
                                   className="max-h-[120px] w-auto object-contain drop-shadow-[0_8px_16px_rgba(15,23,42,0.10)]"
                                 />
+
                               </div>
                             </>
                           ) : (
@@ -750,6 +893,7 @@ export default function RelatedProducts({
                               ◈
                             </span>
                           )}
+
                         </div>
 
                       </button>
@@ -875,8 +1019,8 @@ export default function RelatedProducts({
             <div className="mt-5 rounded-2xl border border-dashed border-entes-border p-8 text-center">
 
               <p className="text-sm font-bold">
-                Bu filtrede ilişkili
-                ürün bulunmuyor.
+                Bu filtrede ilişkili ürün
+                bulunmuyor.
               </p>
 
 
@@ -1029,8 +1173,12 @@ export default function RelatedProducts({
 
 
               {hasCurrentTransformerChoice &&
-                selectedItem.status ===
-                  "required" &&
+                (
+                  selectedItem.status ===
+                    "required" ||
+                  selectedItem.status ===
+                    "conditional"
+                ) &&
                 currentTransformerProductIds.has(
                   selectedItem.product.id
                 ) && (
@@ -1071,8 +1219,12 @@ export default function RelatedProducts({
             ================================================== */}
 
             {hasCurrentTransformerChoice &&
-              selectedItem.status ===
-                "required" &&
+              (
+                selectedItem.status ===
+                  "required" ||
+                selectedItem.status ===
+                  "conditional"
+              ) &&
               currentTransformerProductIds.has(
                 selectedItem.product.id
               ) && (
