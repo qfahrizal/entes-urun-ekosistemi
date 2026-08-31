@@ -144,6 +144,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 } */
+
 body {
   background: var(--background);
   color: var(--entes-text);
@@ -154,6 +155,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 
 /* ==================================================
    TYPOGRAPHY SYSTEM
@@ -266,11 +268,13 @@ p {
 /* ==================================================
    ENTES BRAND FONT
 ================================================== */
+
 .font-entes-brand {
   font-family: inherit;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
+
 /* .font-entes-brand {
   font-family:
     "DINBEK",
@@ -336,114 +340,77 @@ button {
   color: #000000;
 }
 
+
 /* ==================================================
-   ENTES INDUSTRIAL / FUTURISTIC BACKGROUND
+   ENTES PRODUCT ECOSYSTEM BACKGROUND
 ================================================== */
 
 .entes-tech-background {
   position: relative;
   isolation: isolate;
 
-  background:
-    radial-gradient(
-      circle at 8% 10%,
-      rgba(252, 216, 0, 0.12),
-      transparent 26rem
-    ),
-    radial-gradient(
-      circle at 88% 18%,
-      rgba(30, 41, 59, 0.07),
-      transparent 30rem
-    ),
-    radial-gradient(
-      circle at 75% 75%,
-      rgba(252, 216, 0, 0.055),
-      transparent 25rem
-    ),
+  min-height: 100vh;
+
+  /*
+   * BEYAZLIK / OVERLAY ORANI BURADA
+   *
+   * 0.55 → Görsel daha belirgin
+   * 0.60 → Belirgin
+   * 0.68 → Dengeli (önerilen)
+   * 0.72 → Daha açık
+   * 0.80 → Görsel oldukça silik
+   */
+
+  background-image:
     linear-gradient(
-      135deg,
-      #f8f9fa 0%,
-      #f3f5f7 45%,
-      #f7f8f9 100%
-    );
+      rgba(248, 250, 252, 0.68),
+      rgba(248, 250, 252, 0.68)
+    ),
+    url("/backgrounds/bg2.jpeg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /*
+   * Desktop'ta arka plan sabit kalır,
+   * içerik üzerinde kayar.
+   */
+  background-attachment: fixed;
 }
 
 
 /* ==================================================
-   GRID + ENGINEERING LINES
+   ESKİ GRID / ENGINEERING LINES KAPALI
 ================================================== */
 
 .entes-tech-background::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-
-  background-image:
-
-    /* küçük grid */
-    linear-gradient(
-      rgba(30, 41, 59, 0.045) 1px,
-      transparent 1px
-    ),
-
-    linear-gradient(
-      90deg,
-      rgba(30, 41, 59, 0.045) 1px,
-      transparent 1px
-    ),
-
-    /* büyük grid */
-    linear-gradient(
-      rgba(30, 41, 59, 0.025) 1px,
-      transparent 1px
-    ),
-
-    linear-gradient(
-      90deg,
-      rgba(30, 41, 59, 0.025) 1px,
-      transparent 1px
-    );
-
-  background-size:
-    48px 48px,
-    48px 48px,
-    192px 192px,
-    192px 192px;
+  content: none;
 }
 
 
 /* ==================================================
-   TECHNICAL DECORATION / CIRCUIT FEEL
+   ESKİ TEKNİK DAİRE DEKORASYONU KAPALI
 ================================================== */
 
 .entes-tech-background::after {
-  content: "";
-  position: fixed;
+  content: none;
+}
 
-  top: 90px;
-  right: -120px;
 
-  width: 620px;
-  height: 620px;
+/* ==================================================
+   MOBILE BACKGROUND
+================================================== */
 
-  z-index: -1;
-  pointer-events: none;
-
-  opacity: 0.55;
-
-  background:
-    radial-gradient(
-      circle at center,
-      transparent 0 33%,
-      rgba(252, 216, 0, 0.13) 33.2% 33.8%,
-      transparent 34% 48%,
-      rgba(30, 41, 59, 0.055) 48.2% 48.6%,
-      transparent 49%
-    );
-
-  border-radius: 50%;
+@media (max-width: 768px) {
+  .entes-tech-background {
+    /*
+     * fixed background mobil tarayıcılarda
+     * sorun çıkarabildiği için scroll kullanıyoruz.
+     */
+    background-attachment: scroll;
+    background-position: center top;
+  }
 }
 
 
@@ -453,6 +420,7 @@ button {
 
 .entes-tech-card {
   position: relative;
+
   background:
     linear-gradient(
       145deg,
