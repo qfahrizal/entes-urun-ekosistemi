@@ -772,11 +772,28 @@ export default function RelatedProducts({
 
             {hasCurrentTransformerChoice && (
 
-              <div className="mt-4 rounded-2xl border border-entes-accent/50 bg-entes-accent/10 px-4 py-4 sm:px-5">
+              <div
+                className="
+                  mt-4
+                  rounded-2xl
+
+                  border border-amber-300/80
+
+                  bg-[rgba(255,249,218,0.90)]
+
+                  px-4 py-4
+
+                  shadow-[0_8px_24px_rgba(15,23,42,0.08)]
+
+                  backdrop-blur-[10px]
+
+                  sm:px-5
+                "
+              >
 
                 <div className="flex items-start gap-3">
 
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-entes-accent text-sm font-bold text-black">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-entes-accent text-sm font-bold text-black shadow-[0_0_14px_rgba(252,216,0,0.38)]">
                     i
                   </div>
 
@@ -788,7 +805,7 @@ export default function RelatedProducts({
                     </p>
 
 
-                    <p className="mt-1 text-[13px] leading-6 text-entes-text-muted sm:text-sm">
+                    <p className="mt-1 text-[13px] font-medium leading-6 text-entes-text/80 sm:text-sm">
                       Bu uygulama için birden fazla
                       akım trafosu seçeneği
                       gösterilebilir. Uygulamaya uygun
@@ -1229,7 +1246,7 @@ export default function RelatedProducts({
                 selectedItem.product.id
               ) && (
 
-                <div className="mt-4 rounded-2xl border border-entes-accent/50 bg-entes-accent/10 p-4">
+                <div className="mt-4 rounded-2xl border border-amber-300/70 bg-amber-50/90 p-4">
 
                   <p className="text-sm font-bold text-entes-text">
                     Akım Trafosu Seçimi

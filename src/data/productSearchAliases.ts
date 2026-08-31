@@ -253,11 +253,13 @@ export const productSearchAliases: Record<
 
   "kumanda-trafolari": [
     "ent.pst",
+    "ent",
     "pst",
   ],
 
   "izolasyon-trafolari": [
     "ent.ist",
+    "ent",
   ],
 
   "surge-koruma": [
@@ -271,28 +273,33 @@ export const productSearchAliases: Record<
   "og-akim-trafolari": [
     "og",
     "ent.a65",
+    "ent",
     "a65",
   ],
 
   "a-serisi-ag-akim-trafolari": [
     "ent.a",
+    "ent",
     "enta",
   ],
 
   "ayrilabilir-akim-trafolari": [
     "ens.cys",
+    "ens",
     "cys",
   ],
 
   "clamp-tip-ayrilabilir-akim-trafolari":
     [
       "ens.cct",
+      "ens",
       "cct",
     ],
 
   "uc-fazli-akim-trafolari": [
     "ens.3phd",
     "ens.3pmd",
+    "ens",
     "pmd",
     "phd",
   ],

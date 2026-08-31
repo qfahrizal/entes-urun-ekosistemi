@@ -43,6 +43,7 @@ const featuredProductIds = [
   "entes-enerji-izleme-yazilimlari",
 ];
 
+
 const featuredProducts =
   featuredProductIds
     .map((id) =>
@@ -57,6 +58,40 @@ const featuredProducts =
       ): product is Product =>
         Boolean(product)
     );
+
+
+/* ==================================================
+   ÖNE ÇIKAN ÜRÜN HAP BİLGİLERİ
+================================================== */
+
+const featuredHighlights: Record<
+  string,
+  string[]
+> = {
+  emk: [
+    "Class A güç kalitesi analizi",
+    "Güç kalitesi olaylarının izlenmesi",
+    "AG ve OG sistemlerde kullanım",
+  ],
+
+  "svg-ahf": [
+    "Reaktif güç kompanzasyonu",
+    "Aktif harmonik filtreleme",
+    "Faz dengesizliği iyileştirme",
+  ],
+
+  "reaktif-guc-kontrol-rolesi": [
+    "Reaktif güç izleme",
+    "Kompanzasyon kademe kontrolü",
+    "Güç faktörü yönetimi",
+  ],
+
+  "entes-enerji-izleme-yazilimlari": [
+    "Uzaktan enerji izleme",
+    "Enerji verilerinin analizi",
+    "Bulut ve mobil erişim seçenekleri",
+  ],
+};
 
 
 /* ==================================================
@@ -137,6 +172,14 @@ export default function ExploreHome({
     featuredProducts[0];
 
 
+  const activeHighlights =
+    activeProduct
+      ? featuredHighlights[
+          activeProduct.id
+        ] ?? []
+      : [];
+
+
   /* ==================================================
      CAROUSEL KONTROLLERİ
   ================================================== */
@@ -171,7 +214,9 @@ export default function ExploreHome({
       {activeProduct && (
         <section>
 
-          {/* SECTION HEADER */}
+          {/* ==================================================
+              SECTION HEADER
+          ================================================== */}
 
           <div className="mb-8 flex items-center justify-between gap-4">
 
@@ -188,7 +233,9 @@ export default function ExploreHome({
             </div>
 
 
-            {/* SLIDER OKLARI */}
+            {/* ==================================================
+                SLIDER OKLARI
+            ================================================== */}
 
             <div className="hidden gap-2 sm:flex">
 
@@ -198,7 +245,22 @@ export default function ExploreHome({
                   previousProduct
                 }
                 aria-label="Önceki öne çıkan ürün"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-entes-border bg-white text-lg font-medium transition-all duration-200 hover:-translate-y-0.5 hover:border-entes-accent hover:bg-entes-accent"
+                className="
+                  flex h-11 w-11
+                  items-center justify-center
+                  rounded-full
+                  border border-white/70
+                  bg-white/55
+                  text-lg font-medium
+                  shadow-sm
+                  backdrop-blur-lg
+                  transition-all duration-200
+
+                  hover:-translate-y-0.5
+                  hover:border-entes-accent
+                  hover:bg-entes-accent
+                  hover:shadow-[0_0_22px_rgba(252,216,0,0.34)]
+                "
               >
                 ←
               </button>
@@ -210,7 +272,22 @@ export default function ExploreHome({
                   nextProduct
                 }
                 aria-label="Sonraki öne çıkan ürün"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-entes-border bg-white text-lg font-medium transition-all duration-200 hover:-translate-y-0.5 hover:border-entes-accent hover:bg-entes-accent"
+                className="
+                  flex h-11 w-11
+                  items-center justify-center
+                  rounded-full
+                  border border-white/70
+                  bg-white/55
+                  text-lg font-medium
+                  shadow-sm
+                  backdrop-blur-lg
+                  transition-all duration-200
+
+                  hover:-translate-y-0.5
+                  hover:border-entes-accent
+                  hover:bg-entes-accent
+                  hover:shadow-[0_0_22px_rgba(252,216,0,0.34)]
+                "
               >
                 →
               </button>
@@ -224,75 +301,383 @@ export default function ExploreHome({
               ÖNE ÇIKAN ÜRÜN KARTI
           ================================================== */}
 
-          <div className="entes-tech-card overflow-hidden rounded-3xl border border-entes-border">
+          <div
+            className="
+              relative
+              overflow-hidden
+              rounded-[28px]
+
+              border border-white/70
+
+              shadow-[0_20px_60px_rgba(15,23,42,0.14)]
+
+              transition-all
+              duration-300
+            "
+          >
+
+            {/* ==================================================
+                ÜST ENTES IŞIK ÇİZGİSİ
+            ================================================== */}
+
+            <div
+              className="
+                pointer-events-none
+                absolute left-[8%] top-0
+                z-30
+                h-px w-[38%]
+
+                bg-gradient-to-r
+                from-transparent
+                via-entes-accent/90
+                to-transparent
+
+                shadow-[0_0_14px_rgba(252,216,0,0.60)]
+              "
+            />
+
 
             <div className="grid min-h-[360px] grid-cols-1 md:grid-cols-2">
 
+              {/* ==================================================
+                  SOL TARAF
+                  GLASSMORPHISM ÜRÜN GÖRSELİ
+              ================================================== */}
 
-              {/* GÖRSEL */}
+              <div
+                className="
+                  relative
+                  flex
+                  min-h-[240px]
+                  items-center
+                  justify-center
+                  overflow-hidden
 
-              <div className="relative flex min-h-[240px] items-center justify-center overflow-hidden bg-entes-surface-muted p-6 sm:min-h-[280px]">
+                  border-b border-white/50
+
+                  bg-white/[0.001]
+
+                  p-6
+
+                  backdrop-blur-[18px]
+
+                  sm:min-h-[280px]
+                  sm:p-8
+
+                  md:border-b-0
+                  md:border-r
+                  md:border-white/50
+                "
+              >
+
+                {/* CAM ÜZERİNDE HAFİF IŞIK */}
+
+                <div
+                  className="
+                    pointer-events-none
+                    absolute inset-0
+
+                    bg-gradient-to-br
+                    from-white/35
+                    via-white/[0.06]
+                    to-entes-accent/[0.05]
+                  "
+                />
+
+
+                {/* SOFT WHITE GLOW */}
+
+                <div
+                  className="
+                    pointer-events-none
+                    absolute -left-16 -top-20
+
+                    h-[260px]
+                    w-[260px]
+
+                    rounded-full
+
+                    bg-white/35
+
+                    blur-3xl
+                  "
+                />
+
+
                 {activeProduct.image ? (
-                  <div className="relative z-10 flex h-[220px] w-full items-center justify-center sm:h-[260px]">
-                    {/* Soft yellow glow */}
-                    <div className="pointer-events-none absolute left-1/2 top-1/2 h-[180px] w-[180px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-entes-accent/20 blur-3xl" />
 
-                    <div className="pointer-events-none absolute left-1/2 top-1/2 h-[130px] w-[130px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-entes-accent/22 blur-2xl" />
+                  <div className="relative z-10 flex h-[220px] w-full items-center justify-center sm:h-[260px]">
+
+                    {/* ==================================================
+                        ENTES YELLOW PRODUCT GLOW
+                    ================================================== */}
+
+                    <div
+                      className="
+                        pointer-events-none
+                        absolute
+                        left-1/2
+                        top-1/2
+
+                        h-[210px]
+                        w-[210px]
+
+                        -translate-x-1/2
+                        -translate-y-1/2
+
+                        rounded-full
+
+                        bg-entes-accent/[0.15]
+
+                        blur-3xl
+                      "
+                    />
+
+
+                    <div
+                      className="
+                        pointer-events-none
+                        absolute
+                        left-1/2
+                        top-1/2
+
+                        h-[130px]
+                        w-[130px]
+
+                        -translate-x-1/2
+                        -translate-y-1/2
+
+                        rounded-full
+
+                        bg-entes-accent/[0.16]
+
+                        blur-2xl
+                      "
+                    />
+
+
+                    {/* ÜRÜN GÖRSELİ */}
 
                     <div className="relative h-full w-full">
+
                       <Image
                         src={activeProduct.image}
                         alt={activeProduct.name}
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-contain drop-shadow-[0_12px_28px_rgba(15,23,42,0.12)]"
+                        className="
+                          object-contain
+
+                          drop-shadow-[0_14px_28px_rgba(15,23,42,0.18)]
+
+                          transition-transform
+                          duration-500
+
+                          hover:scale-[1.025]
+                        "
                       />
+
                     </div>
+
                   </div>
+
                 ) : (
-                  <div className="text-center text-entes-text-muted">
-                    <div className="text-5xl">◈</div>
+
+                  <div className="relative z-10 text-center text-entes-text-muted">
+
+                    <div className="text-5xl">
+                      ◈
+                    </div>
+
                     <p className="mt-3 text-xs">
                       Ürün görseli
                     </p>
+
                   </div>
+
                 )}
+
               </div>
 
 
-              {/* ÜRÜN BİLGİSİ */}
-              <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10 xl:p-12">
+              {/* ==================================================
+                  SAĞ TARAF
+                  TAM BEYAZ ÜRÜN BİLGİ ALANI
+              ================================================== */}
 
-                {/* BAŞLIK BLOĞU */}
+              <div
+                className="
+                  relative
+                  flex
+                  flex-col
+                  justify-center
+
+                  bg-white
+
+                  p-6
+
+                  sm:p-8
+                  lg:p-10
+                  xl:p-12
+                "
+              >
+
+                {/* ==================================================
+                    BAŞLIK
+                ================================================== */}
+
                 <div className="flex flex-col gap-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-entes-text-soft">
+
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-entes-text-soft">
                     Öne Çıkan Ürün
                   </p>
 
-                  {/* font-black (900) ve inline style ile maksimum kalınlık garantiye alındı */}
-                  <h3 
-                    style={{ fontWeight: 750 }}
-                    className="break-words text-2xl font-extrabold leading-tight tracking-tight text-entes-text sm:text-3xl lg:text-[34px]"
+
+                  <h3
+                    style={{
+                      fontWeight: 750,
+                    }}
+                    className="
+                      max-w-2xl
+                      break-words
+
+                      text-2xl
+                      font-extrabold
+                      leading-tight
+                      tracking-tight
+                      text-entes-text
+
+                      sm:text-3xl
+                      lg:text-[34px]
+                    "
                   >
                     {activeProduct.name}
                   </h3>
+
                 </div>
 
-                {/* AÇIKLAMA (mt-4 ile başlıkla aradaki boşluk net şekilde ayarlandı) */}
-                <p className="mt-7 max-w-2xl text-[15px] leading-relaxed text-entes-text-muted sm:text-base">
-                  {activeProduct.description}
-                </p>
 
-                {/* BUTON */}
+                {/* ==================================================
+                    HAP BİLGİLER
+                ================================================== */}
+
+                <div className="mt-7 space-y-3.5">
+
+                  {activeHighlights.map(
+                    (highlight) => (
+
+                      <div
+                        key={highlight}
+                        className="
+                          group/highlight
+                          flex
+                          items-center
+                          gap-3.5
+                        "
+                      >
+
+                        {/* NEON DOT */}
+
+                        <span
+                          className="
+                            h-2.5
+                            w-2.5
+                            shrink-0
+
+                            rounded-full
+
+                            bg-entes-accent
+
+                            shadow-[0_0_10px_rgba(252,216,0,0.72)]
+
+                            transition-shadow
+                            duration-200
+
+                            group-hover/highlight:shadow-[0_0_16px_rgba(252,216,0,0.95)]
+                          "
+                        />
+
+
+                        <span
+                          className="
+                            text-[15px]
+                            font-medium
+                            leading-6
+                            text-entes-text-muted
+
+                            sm:text-base
+                          "
+                        >
+                          {highlight}
+                        </span>
+
+                      </div>
+
+                    )
+                  )}
+
+                </div>
+
+
+                {/* ==================================================
+                    ENTES NEON CTA
+                ================================================== */}
+
                 <button
                   type="button"
-                  onClick={() => onProductSelect(activeProduct)}
-                  className="group mt-6 inline-flex w-fit items-center rounded-xl bg-entes-accent px-5 py-3 text-sm font-semibold text-black transition-all duration-200 hover:-translate-y-0.5 hover:brightness-95"
+                  onClick={() =>
+                    onProductSelect(
+                      activeProduct
+                    )
+                  }
+                  className="
+                    group
+                    mt-8
+
+                    inline-flex
+                    w-fit
+                    items-center
+
+                    rounded-xl
+
+                    border
+                    border-entes-accent
+
+                    bg-entes-accent
+
+                    px-6
+                    py-3.5
+
+                    text-sm
+                    font-bold
+                    text-black
+
+                    shadow-[0_0_18px_rgba(252,216,0,0.30)]
+
+                    transition-all
+                    duration-300
+
+                    hover:-translate-y-0.5
+                    hover:brightness-105
+
+                    hover:shadow-[0_0_14px_rgba(252,216,0,0.65),0_0_38px_rgba(252,216,0,0.38)]
+                  "
                 >
                   Ürünü İncele
-                  <span className="ml-2 transition-transform duration-200 group-hover:translate-x-1">
+
+
+                  <span
+                    className="
+                      ml-2
+                      transition-transform
+                      duration-300
+
+                      group-hover:translate-x-1.5
+                    "
+                  >
                     →
                   </span>
+
                 </button>
 
               </div>
@@ -331,7 +716,7 @@ export default function ExploreHome({
                     className={`h-2 rounded-full transition-all duration-300 ${
                       activeIndex ===
                       index
-                        ? "w-8 bg-entes-accent"
+                        ? "w-8 bg-entes-accent shadow-[0_0_12px_rgba(252,216,0,0.55)]"
                         : "w-2 bg-entes-border hover:bg-entes-text-muted"
                     }`}
                   />
@@ -375,27 +760,38 @@ export default function ExploreHome({
 
             </div>
 
-
-            {/*<p className="mt-6 max-w-2xl text-[15px] leading-7 text-entes-text-muted sm:text-base">
-              ENTES ürün portföyündeki ana
-              kategorilerden birini seçerek
-              ürün gruplarını
-              inceleyebilirsiniz.
-            </p>*/}
-
           </div>
 
 
-          {/* TÜM KATEGORİLER */}
+          {/* ==================================================
+              TÜM KATEGORİLER
+          ================================================== */}
 
           <button
             type="button"
             onClick={
               onOpenMenu
             }
-            className="group w-full rounded-xl bg-entes-primary px-5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-entes-primary-hover sm:w-auto"
+            className="
+              group
+              w-full
+              rounded-xl
+              bg-entes-primary
+              px-5 py-3
+              text-sm
+              font-semibold
+              text-white
+              transition-all
+              duration-200
+
+              hover:-translate-y-0.5
+              hover:bg-entes-primary-hover
+
+              sm:w-auto
+            "
           >
             Tüm Kategoriler
+
 
             <span className="ml-2 inline-block transition-transform duration-200 group-hover:translate-x-1">
               →
@@ -425,7 +821,27 @@ export default function ExploreHome({
                     category.id
                   )
                 }
-                className="entes-tech-card entes-interactive-card group relative flex min-h-[205px] overflow-hidden rounded-2xl border border-entes-border text-left hover:border-entes-accent"
+                className="
+                  entes-tech-card
+                  entes-interactive-card
+
+                  group
+                  relative
+
+                  flex
+                  min-h-[205px]
+
+                  overflow-hidden
+
+                  rounded-2xl
+
+                  border
+                  border-entes-border
+
+                  text-left
+
+                  hover:border-entes-accent
+                "
               >
 
 
@@ -461,6 +877,7 @@ export default function ExploreHome({
 
                     Ürünleri Gör
 
+
                     <span className="ml-1.5">
                       →
                     </span>
@@ -492,8 +909,14 @@ export default function ExploreHome({
                   <div className="relative z-10 h-[105px] w-[105px] transition-transform duration-300 group-hover:scale-[1.06] sm:h-[118px] sm:w-[118px]">
 
                     <Image
-                      src={categoryImages[category.id]}
-                      alt={category.label}
+                      src={
+                        categoryImages[
+                          category.id
+                        ]
+                      }
+                      alt={
+                        category.label
+                      }
                       width={150}
                       height={150}
                       unoptimized

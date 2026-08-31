@@ -363,8 +363,8 @@ button {
 
   background-image:
     linear-gradient(
-      rgba(248, 250, 252, 0.68),
-      rgba(248, 250, 252, 0.68)
+      rgba(248, 250, 252, 0.50),
+      rgba(248, 250, 252, 0.50)
     ),
     url("/backgrounds/bg2.jpeg");
 
@@ -473,4 +473,69 @@ button {
   box-shadow:
     0 4px 10px rgba(15, 23, 42, 0.04),
     0 18px 42px rgba(15, 23, 42, 0.08);
+}
+
+/* ==================================================
+   GLASS CARD
+================================================== */
+
+.entes-glass-card {
+  position: relative;
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.08),
+    0 2px 8px rgba(15, 23, 42, 0.04);
+
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.entes-glass-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 8%;
+  width: 34%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(252, 216, 0, 0.9),
+    transparent
+  );
+
+  pointer-events: none;
+}
+
+.entes-glass-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.26),
+    rgba(255, 255, 255, 0.06)
+  );
+}
+
+.entes-glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(252, 216, 0, 0.7);
+
+  box-shadow:
+    0 16px 36px rgba(15, 23, 42, 0.1),
+    0 4px 10px rgba(15, 23, 42, 0.05);
 }
