@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   useEffect,
   useState,
@@ -12,6 +13,7 @@ import ProductBreadcrumb from "@/components/ProductBreadcrumb";
 import ProductHero from "@/components/ProductHero";
 import RelatedProducts from "@/components/RelatedProducts";
 import SidebarDrawer from "@/components/SidebarDrawer";
+
 import { products } from "@/data/products";
 
 import type {
@@ -21,6 +23,13 @@ import type {
 
 
 export default function KesfetPage() {
+  const router = useRouter();
+
+
+  /* ==================================================
+     SIDEBAR
+  ================================================== */
+
   const [
     menuOpen,
     setMenuOpen,
@@ -28,77 +37,119 @@ export default function KesfetPage() {
 
 
   /*
-   * null = Anasayfa
-   * product = Ürün detay görünümü
+   * null:
+   * /kesfet ana ekranı
+   *
+   * Product:
+   * ürün detay görünümü
    */
   const [
     selectedProduct,
     setSelectedProduct,
-  ] = useState<Product | null>(null);
-
-
-  /*
-   * Drawer açıldığında hangi kategori
-   * açık gösterilecek.
-   */
-  const [
-    requestedCategory,
-    setRequestedCategory,
-  ] = useState<MenuCategory | null>(null);
-
-
-  /*
-   * /kesfet sayfası browser tarafından
-   * reload edilirse landing page'e dön.
-   
-  useEffect(() => {
-    const navigationEntries =
-      performance.getEntriesByType(
-        "navigation"
-      ) as PerformanceNavigationTiming[];
-
-    const navigationEntry =
-      navigationEntries[0];
-
-    if (
-      navigationEntry?.type === "reload"
-    ) {
-      window.location.replace("/");
-    }
-  }, []);*/
-
-  /* ==================================================
-   BROWSER HISTORY
-================================================== */
-
-useEffect(() => {
-  /*
-   * /kesfet ilk açıldığında mevcut history
-   * kaydını "anasayfa" olarak işaretle.
-   */
-  window.history.replaceState(
-    {
-      productId: null,
-    },
-    "",
-    "/kesfet"
+  ] = useState<Product | null>(
+    null
   );
 
 
   /*
-   * Browser geri / ileri butonlarını dinle.
+   * Sidebar açıldığında hangi
+   * kategori açık gösterilecek.
    */
-  const handlePopState = (
-    event: PopStateEvent
-  ) => {
-    const productId =
-      event.state?.productId ?? null;
+  const [
+    requestedCategory,
+    setRequestedCategory,
+  ] = useState<MenuCategory | null>(
+    null
+  );
+
+
+  /* ==================================================
+     BROWSER HISTORY
+  ================================================== */
+
+  useEffect(() => {
+    const previousScrollRestoration =
+      window.history.scrollRestoration;
+
+
+    window.history.scrollRestoration =
+      "manual";
 
 
     /*
-     * productId yoksa Keşfet Anasayfa
+     * /kesfet ilk açıldığında mevcut
+     * history kaydını Keşfet ana ekranı
+     * olarak işaretle.
      */
-    if (!productId) {
+    window.history.replaceState(
+      {
+        productId: null,
+      },
+      "",
+      "/kesfet"
+    );
+
+
+    const handlePopState = (
+      event: PopStateEvent
+    ) => {
+      const productId =
+        event.state?.productId ??
+        null;
+
+
+      /* ==================================================
+         KEŞFET ANA EKRANI
+      ================================================== */
+
+      if (!productId) {
+        setSelectedProduct(null);
+        setRequestedCategory(null);
+        setMenuOpen(false);
+
+        window.scrollTo({
+          top: 0,
+          behavior: "auto",
+        });
+
+        return;
+      }
+
+
+      /* ==================================================
+         ÜRÜN HISTORY KAYDI
+      ================================================== */
+
+      const previousProduct =
+        products.find(
+          (item) =>
+            item.id === productId
+        );
+
+
+      if (previousProduct) {
+        setSelectedProduct(
+          previousProduct
+        );
+
+        setRequestedCategory(null);
+        setMenuOpen(false);
+
+        window.scrollTo({
+          top: 0,
+          behavior: "auto",
+        });
+
+        return;
+      }
+
+
+      /*
+       * History içinde artık products.ts
+       * içerisinde bulunmayan eski veya
+       * geçersiz productId varsa güvenli
+       * şekilde Keşfet ana ekranına dön.
+       */
       setSelectedProduct(null);
       setRequestedCategory(null);
       setMenuOpen(false);
@@ -107,108 +158,135 @@ useEffect(() => {
         top: 0,
         behavior: "auto",
       });
+    };
+
+
+    window.addEventListener(
+      "popstate",
+      handlePopState
+    );
+
+
+    return () => {
+      window.history.scrollRestoration =
+        previousScrollRestoration;
+
+      window.removeEventListener(
+        "popstate",
+        handlePopState
+      );
+    };
+  }, []);
+
+
+  /* ==================================================
+     ÜRÜN SEÇİMİ
+  ================================================== */
+
+  const selectProduct = (
+    product: Product
+  ) => {
+    /*
+     * Aynı ürün zaten açıksa tekrar
+     * history kaydı oluşturma.
+     */
+    if (
+      selectedProduct?.id ===
+      product.id
+    ) {
+      setRequestedCategory(null);
+      setMenuOpen(false);
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
 
       return;
     }
 
 
     /*
-     * Önceki ürün kaydını bul
+     * Yeni ürünü browser history'ye ekle.
      */
-    const previousProduct =
-      products.find(
-        (item) =>
-          item.id === productId
-      );
+    window.history.pushState(
+      {
+        productId: product.id,
+      },
+      "",
+      "/kesfet"
+    );
 
 
-    if (previousProduct) {
-      setSelectedProduct(
-        previousProduct
-      );
+    setSelectedProduct(product);
+    setRequestedCategory(null);
+    setMenuOpen(false);
 
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+
+  /* ==================================================
+     KEŞFET ANA EKRANINA DÖN
+  ================================================== */
+
+  const goToExploreHome = () => {
+    /*
+     * Zaten /kesfet ana ekranındaysak
+     * yeni history kaydı oluşturma.
+     */
+    if (!selectedProduct) {
       setRequestedCategory(null);
       setMenuOpen(false);
 
       window.scrollTo({
         top: 0,
-        behavior: "auto",
+        behavior: "smooth",
       });
+
+      return;
     }
-  };
 
 
-  window.addEventListener(
-    "popstate",
-    handlePopState
-  );
-
-
-  return () => {
-    window.removeEventListener(
-      "popstate",
-      handlePopState
+    /*
+     * Ürün detayından Keşfet ana ekranına
+     * geçişi history kaydı olarak ekle.
+     */
+    window.history.pushState(
+      {
+        productId: null,
+      },
+      "",
+      "/kesfet"
     );
-  };
-}, []);
 
 
-  /* ==================================================
-     ÜRÜN SEÇİMİ
-  ================================================== 
-
-  const selectProduct = (
-    product: Product
-  ) => {
-    setSelectedProduct(product);
-    setRequestedCategory(null);
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };*/
-
-const selectProduct = (
-  product: Product
-) => {
-  /*
-   * Yeni ürünü browser history'ye ekle.
-   */
-  window.history.pushState(
-    {
-      productId: product.id,
-    },
-    "",
-    "/kesfet"
-  );
-
-
-  setSelectedProduct(product);
-  setRequestedCategory(null);
-  setMenuOpen(false);
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
-
-
-  /* ==================================================
-     ANASAYFAYA DÖN
-  ================================================== */
-
-  const goToExploreHome = () => {
     setSelectedProduct(null);
     setRequestedCategory(null);
     setMenuOpen(false);
 
+
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
+  };
+
+
+  /* ==================================================
+     LANDING PAGE'E DÖN
+     /
+  ================================================== */
+
+  const goToLandingPage = () => {
+    setMenuOpen(false);
+    setRequestedCategory(null);
+
+    router.push("/");
   };
 
 
@@ -229,10 +307,17 @@ const selectProduct = (
   const openCategoryMenu = (
     categoryId: MenuCategory
   ) => {
-    setRequestedCategory(categoryId);
+    setRequestedCategory(
+      categoryId
+    );
+
     setMenuOpen(true);
   };
 
+
+  /* ==================================================
+     RENDER
+  ================================================== */
 
   return (
     <main className="entes-tech-background min-h-screen text-entes-text">
@@ -253,8 +338,14 @@ const selectProduct = (
 
           <button
             type="button"
-            onClick={openGeneralMenu}
+            onClick={
+              openGeneralMenu
+            }
             aria-label="Ürün menüsünü aç"
+            aria-expanded={
+              menuOpen
+            }
+            aria-controls="product-sidebar"
             className="group mr-4 flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-[6px] rounded-xl border border-black/15 bg-white/75 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-md sm:mr-6 sm:h-[52px] sm:w-[52px]"
           >
             <span className="h-0.5 w-5 rounded-full bg-black" />
@@ -265,12 +356,15 @@ const selectProduct = (
 
           {/* ==================================================
               ENTES LOGO
+              GERÇEK LANDING PAGE'E DÖNER
           ================================================== */}
 
           <button
             type="button"
-            onClick={goToExploreHome}
-            aria-label="Anasayfa'ya dön"
+            onClick={
+              goToLandingPage
+            }
+            aria-label="ENTES ana sayfasına dön"
             className="shrink-0"
           >
             <Image
@@ -286,25 +380,24 @@ const selectProduct = (
 
           {/* ==================================================
               ÜRÜN EKOSİSTEMİ
+              /KESFET ANA EKRANINA DÖNER
           ================================================== */}
 
           <button
             type="button"
-            onClick={goToExploreHome}
+            onClick={
+              goToExploreHome
+            }
             className="ml-4 min-w-0 flex-1 border-l-4 border-white/90 pl-4 text-left sm:ml-6 sm:pl-6"
           >
             <h1 className="text-[28px] font-black leading-none tracking-wide text-white">
               Ürün Ekosistemi
             </h1>
-
-            {/*<p className="mt-1.5 hidden text-[12px] font-semibold tracking-[0.09em] text-white/65 sm:block">
-              ÇÖZÜM PLATFORMU
-            </p>*/}
           </button>
 
 
           {/* ==================================================
-              ENTES WEB SİTESİ
+              ENTES RESMİ WEB SİTESİ
           ================================================== */}
 
           <a
@@ -320,7 +413,6 @@ const selectProduct = (
             <span className="hidden sm:inline">
               ENTES Resmi Web Sitesi
             </span>
-
           </a>
 
         </div>
@@ -333,11 +425,15 @@ const selectProduct = (
       ================================================== */}
 
       <SidebarDrawer
-        open={menuOpen}
+        open={
+          menuOpen
+        }
         onClose={() =>
           setMenuOpen(false)
         }
-        onProductSelect={selectProduct}
+        onProductSelect={
+          selectProduct
+        }
         selectedProductId={
           selectedProduct?.id
         }
@@ -362,6 +458,10 @@ const selectProduct = (
         {selectedProduct ? (
           <>
 
+            {/* ==================================================
+                BREADCRUMB
+            ================================================== */}
+
             <ProductBreadcrumb
               product={
                 selectedProduct
@@ -372,12 +472,20 @@ const selectProduct = (
             />
 
 
+            {/* ==================================================
+                PRODUCT HERO
+            ================================================== */}
+
             <ProductHero
               product={
                 selectedProduct
               }
             />
 
+
+            {/* ==================================================
+                RELATED PRODUCTS
+            ================================================== */}
 
             <RelatedProducts
               product={
@@ -390,6 +498,10 @@ const selectProduct = (
 
           </>
         ) : (
+
+          /* ==================================================
+             KEŞFET ANA EKRANI
+          ================================================== */
 
           <ExploreHome
             onProductSelect={
@@ -419,6 +531,7 @@ const selectProduct = (
           <span className="font-semibold text-black">
             © 2026 ENTES Ürün Ekosistemi
           </span>
+
 
           <span className="font-medium">
             Staj projesi kapsamında

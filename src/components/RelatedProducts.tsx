@@ -13,6 +13,7 @@ import { products } from "@/data/products";
 import { relations } from "@/data/relations";
 
 import type {
+  MenuCategory,
   Product,
   Relation,
   RelationStatus,
@@ -117,7 +118,7 @@ const statusStyles: Record<
 ================================================== */
 
 const menuCategoryOrder: Record<
-  string,
+  MenuCategory,
   number
 > = {
   "power-quality": 0,
@@ -157,13 +158,11 @@ for (const category of productCategories) {
 /* ==================================================
    AKIM TRAFOSU ÜRÜN GRUPLARI
 
-   Bir cihaz için birden fazla uygun CT
-   seçeneği gösterilebilir.
+   Aynı uygulamada birden fazla uygun akım
+   trafosu seçeneği gösterilebilir.
 
-   Kullanıcı tüm CT tiplerini birlikte
-   kullanmak zorunda değildir.
-
-   Uygulamaya uygun CT tipi seçilir.
+   Bu ürünlerin tamamının birlikte kullanılması
+   gerekmez. Uygulamaya uygun tip seçilir.
 ================================================== */
 
 const currentTransformerProductIds =
@@ -173,34 +172,43 @@ const currentTransformerProductIds =
     "ayrilabilir-akim-trafolari",
     "clamp-tip-ayrilabilir-akim-trafolari",
     "uc-fazli-akim-trafolari",
+    "ct-serisi-akim-trafolari",
   ]);
 
 
 /* ==================================================
-   YÖN BAZLI RELATION HELPER'LARI
+   RELATION PERSPECTIVE HELPERS
+
+   Relation kayıtları yönlüdür.
+
+   Seçili ürün sourceProductId ise source tarafındaki
+   status ve title kullanılır.
+
+   Seçili ürün targetProductId ise target tarafındaki
+   status ve title kullanılır.
 ================================================== */
+
+function isRelationSource(
+  relation: Relation,
+  currentProductId: string
+): boolean {
+  return (
+    relation.sourceProductId ===
+    currentProductId
+  );
+}
+
 
 function getRelationStatus(
   relation: Relation,
   currentProductId: string
 ): RelationStatus {
-  const isSource =
-    relation.sourceProductId ===
-    currentProductId;
-
-  if (isSource) {
-    return (
-      relation.sourceStatus ??
-      relation.status ??
-      "conditional"
-    );
-  }
-
-  return (
-    relation.targetStatus ??
-    relation.status ??
-    "conditional"
-  );
+  return isRelationSource(
+    relation,
+    currentProductId
+  )
+    ? relation.sourceStatus
+    : relation.targetStatus;
 }
 
 
@@ -208,23 +216,25 @@ function getRelationTitle(
   relation: Relation,
   currentProductId: string
 ): string {
-  const isSource =
-    relation.sourceProductId ===
-    currentProductId;
+  return isRelationSource(
+    relation,
+    currentProductId
+  )
+    ? relation.sourceTitle
+    : relation.targetTitle;
+}
 
-  if (isSource) {
-    return (
-      relation.sourceTitle ??
-      relation.title ??
-      "Ürün İlişkisi"
-    );
-  }
 
-  return (
-    relation.targetTitle ??
-    relation.title ??
-    "Ürün İlişkisi"
-  );
+function getOtherProductId(
+  relation: Relation,
+  currentProductId: string
+): string {
+  return isRelationSource(
+    relation,
+    currentProductId
+  )
+    ? relation.targetProductId
+    : relation.sourceProductId;
 }
 
 
@@ -262,12 +272,50 @@ export default function RelatedProducts({
   }, [product.id]);
 
 
+  /* ==================================================
+     FİLTRE / ÜRÜN DEĞİŞTİĞİNDE CAROUSEL BAŞA DÖNSÜN
+  ================================================== */
+
   useEffect(() => {
     scrollAreaRef.current?.scrollTo({
       left: 0,
       behavior: "smooth",
     });
-  }, [statusFilter, product.id]);
+  }, [
+    statusFilter,
+    product.id,
+  ]);
+
+
+  /* ==================================================
+     MODAL ESCAPE DESTEĞİ
+  ================================================== */
+
+  useEffect(() => {
+    if (!selectedRelationId) {
+      return;
+    }
+
+    const handleKeyDown = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key === "Escape") {
+        setSelectedRelationId(null);
+      }
+    };
+
+    window.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+    };
+  }, [selectedRelationId]);
 
 
   /* ==================================================
@@ -289,15 +337,11 @@ export default function RelatedProducts({
       const items =
         relevantRelations
           .map((relation) => {
-            const isSource =
-              relation.sourceProductId ===
-              product.id;
-
-
             const otherProductId =
-              isSource
-                ? relation.targetProductId
-                : relation.sourceProductId;
+              getOtherProductId(
+                relation,
+                product.id
+              );
 
 
             const relatedProduct =
@@ -308,30 +352,32 @@ export default function RelatedProducts({
               );
 
 
+            /*
+             * relations.ts içerisinde bulunan productId,
+             * products.ts içerisinde tanımlı değilse
+             * kart oluşturulmaz.
+             */
             if (!relatedProduct) {
               return null;
             }
 
 
-            const status =
-              getRelationStatus(
-                relation,
-                product.id
-              );
-
-
-            const title =
-              getRelationTitle(
-                relation,
-                product.id
-              );
-
-
             return {
               product: relatedProduct,
+
               relation,
-              status,
-              title,
+
+              status:
+                getRelationStatus(
+                  relation,
+                  product.id
+                ),
+
+              title:
+                getRelationTitle(
+                  relation,
+                  product.id
+                ),
             };
           })
           .filter(
@@ -343,29 +389,26 @@ export default function RelatedProducts({
 
 
       /*
-       * Önce ENTES ana kategori sırası,
-       * sonra kategori içindeki ürün sırası.
+       * ENTES ana menü sırası:
        *
-       * Güç Kalitesi & Enerji
-       * → Ölçme
-       * → Kompanzasyon
-       * → Enerji Yönetimi
-       * → Koruma & Kontrol
-       * → Akım Trafoları
+       * 1. Güç Kalitesi & Enerji
+       * 2. Ölçme
+       * 3. Kompanzasyon
+       * 4. Enerji Yönetimi
+       * 5. Koruma & Kontrol
+       * 6. Akım Trafoları
        */
 
       return items.sort((a, b) => {
         const aCategoryOrder =
           menuCategoryOrder[
             a.product.menuCategory
-          ] ??
-          Number.MAX_SAFE_INTEGER;
+          ];
 
         const bCategoryOrder =
           menuCategoryOrder[
             b.product.menuCategory
-          ] ??
-          Number.MAX_SAFE_INTEGER;
+          ];
 
 
         if (
@@ -411,9 +454,7 @@ export default function RelatedProducts({
 
   const filteredItems =
     useMemo(() => {
-      if (
-        statusFilter === "all"
-      ) {
+      if (statusFilter === "all") {
         return relatedItems;
       }
 
@@ -426,6 +467,35 @@ export default function RelatedProducts({
       relatedItems,
       statusFilter,
     ]);
+
+
+  /* ==================================================
+     STATUS SAYILARI
+  ================================================== */
+
+  const statusCounts =
+    useMemo<
+      Record<RelationStatus, number>
+    >(() => {
+      const counts: Record<
+        RelationStatus,
+        number
+      > = {
+        required: 0,
+        conditional: 0,
+        optional: 0,
+        alternative: 0,
+        related: 0,
+      };
+
+
+      for (const item of relatedItems) {
+        counts[item.status] += 1;
+      }
+
+
+      return counts;
+    }, [relatedItems]);
 
 
   /* ==================================================
@@ -450,25 +520,11 @@ export default function RelatedProducts({
 
 
   /* ==================================================
-     MEVCUT ÖNERİ SEVİYELERİ
-  ================================================== */
-
-  const availableStatuses =
-    useMemo(() => {
-      return new Set<RelationStatus>(
-        relatedItems.map(
-          (item) =>
-            item.status
-        )
-      );
-    }, [relatedItems]);
-
-
-  /* ==================================================
      AKIM TRAFOSU SEÇİM KONTROLÜ
 
      Required veya Conditional CT seçeneklerinin
-     birden fazlası varsa özel seçim notu göster.
+     birden fazlası varsa kullanıcıya bunların
+     "one-of" seçeneği olduğu açıklanır.
   ================================================== */
 
   const currentTransformerChoiceCount =
@@ -490,20 +546,6 @@ export default function RelatedProducts({
 
   const hasCurrentTransformerChoice =
     currentTransformerChoiceCount > 1;
-
-
-  /* ==================================================
-     STATUS SAYISI
-  ================================================== */
-
-  const getStatusCount = (
-    status: RelationStatus
-  ) => {
-    return relatedItems.filter(
-      (item) =>
-        item.status === status
-    ).length;
-  };
 
 
   /* ==================================================
@@ -587,18 +629,36 @@ export default function RelatedProducts({
 
 
   /* ==================================================
+     CT BADGE KONTROLÜ
+  ================================================== */
+
+  const shouldShowCtChoice = (
+    item: RelatedItem
+  ) => {
+    return (
+      hasCurrentTransformerChoice &&
+      (
+        item.status === "required" ||
+        item.status === "conditional"
+      ) &&
+      currentTransformerProductIds.has(
+        item.product.id
+      )
+    );
+  };
+
+
+  /* ==================================================
      RENDER
   ================================================== */
 
   return (
     <>
-
       {/* ==================================================
           İLİŞKİLİ ÜRÜNLER
       ================================================== */}
 
       <section className="mt-5 sm:mt-6">
-
 
         {/* ==================================================
             BAŞLIK
@@ -626,203 +686,183 @@ export default function RelatedProducts({
             ÖNERİ SEVİYESİ FİLTRELERİ + CAROUSEL OKLARI
         ================================================== */}
 
-        {relatedItems.length >
-          0 && (
-          <>
+        <div className="mt-4 flex items-center gap-3 sm:mt-5">
 
-            <div className="mt-4 flex items-center gap-3 sm:mt-5">
+          {/* FİLTRELER */}
 
-              {/* ==================================================
-                  FİLTRELER
-              ================================================== */}
+          <div className="min-w-0 flex flex-1 gap-2 overflow-x-auto pb-1">
 
-              <div className="min-w-0 flex flex-1 gap-2 overflow-x-auto pb-1">
+            {/* TÜMÜ */}
 
-                {/* TÜMÜ */}
+            <button
+              type="button"
+              onClick={() =>
+                setStatusFilter("all")
+              }
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition sm:text-sm ${
+                statusFilter === "all"
+                  ? "border-entes-accent bg-entes-accent text-black"
+                  : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
+              }`}
+            >
+              Tümü ({relatedItems.length})
+            </button>
 
+
+            {/* STATUS FİLTRELERİ */}
+
+            {statusKeys.map(
+              (status) => (
                 <button
+                  key={status}
                   type="button"
                   onClick={() =>
-                    setStatusFilter("all")
+                    setStatusFilter(
+                      status
+                    )
                   }
                   className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition sm:text-sm ${
-                    statusFilter === "all"
-                      ? "border-entes-accent bg-entes-accent text-black"
+                    statusFilter ===
+                    status
+                      ? statusStyles[
+                          status
+                        ]
                       : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
                   }`}
                 >
-                  Tümü ({relatedItems.length})
+                  {statusLabels[status]}{" "}
+                  ({statusCounts[status]})
                 </button>
+              )
+            )}
+
+          </div>
 
 
-                {/* STATUS FİLTRELERİ */}
+          {/* CAROUSEL OKLARI */}
 
-                {statusKeys.map((status) => {
-                  if (
-                    !availableStatuses.has(
-                      status
-                    )
-                  ) {
-                    return null;
-                  }
+          {filteredItems.length > 0 && (
 
+            <div className="hidden shrink-0 gap-2 sm:flex">
 
-                  return (
-                    <button
-                      key={status}
-                      type="button"
-                      onClick={() =>
-                        setStatusFilter(status)
-                      }
-                      className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition sm:text-sm ${
-                        statusFilter === status
-                          ? statusStyles[status]
-                          : "border-entes-border bg-white text-entes-text-muted hover:border-entes-accent"
-                      }`}
-                    >
-                      {statusLabels[status]}{" "}
-                      ({getStatusCount(status)})
-                    </button>
-                  );
-                })}
-
-              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  scroll("left")
+                }
+                aria-label="Önceki ilişkili ürünler"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
+              >
+                ←
+              </button>
 
 
-              {/* ==================================================
-                  CAROUSEL OKLARI
-              ================================================== */}
-
-              {filteredItems.length > 0 && (
-                <div className="hidden shrink-0 gap-2 sm:flex">
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      scroll("left")
-                    }
-                    aria-label="Önceki ilişkili ürünler"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
-                  >
-                    ←
-                  </button>
-
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      scroll("right")
-                    }
-                    aria-label="Sonraki ilişkili ürünler"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
-                  >
-                    →
-                  </button>
-
-                </div>
-              )}
+              <button
+                type="button"
+                onClick={() =>
+                  scroll("right")
+                }
+                aria-label="Sonraki ilişkili ürünler"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-entes-border bg-white text-lg transition hover:border-entes-accent hover:bg-entes-accent"
+              >
+                →
+              </button>
 
             </div>
 
+          )}
 
-            {/* ==================================================
-                SEÇİLİ STATUS AÇIKLAMASI
-            ================================================== */}
-
-            {statusFilter !==
-              "all" && (
-
-              <div className="mt-4 rounded-2xl border border-entes-border bg-white px-4 py-4 sm:px-5">
-
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-
-                  <span
-                    className={`inline-flex w-fit shrink-0 rounded-full border px-3 py-1.5 text-xs font-bold sm:text-sm ${
-                      statusStyles[
-                        statusFilter
-                      ]
-                    }`}
-                  >
-                    {
-                      statusLabels[
-                        statusFilter
-                      ]
-                    }
-                  </span>
+        </div>
 
 
-                  <p className="text-sm leading-6 text-entes-text-muted sm:translate-y-[1px] sm:text-base sm:leading-7">
-                    {
-                      statusDescriptions[
-                        statusFilter
-                      ]
-                    }
-                  </p>
+        {/* ==================================================
+            SEÇİLİ STATUS AÇIKLAMASI
+        ================================================== */}
 
-                </div>
+        {statusFilter !== "all" && (
 
-              </div>
+          <div className="mt-4 rounded-2xl border border-entes-border bg-white px-4 py-4 sm:px-5">
 
-            )}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
 
-
-            {/* ==================================================
-                AKIM TRAFOSU SEÇİM UYARISI
-            ================================================== */}
-
-            {hasCurrentTransformerChoice && (
-
-              <div
-                className="
-                  mt-4
-                  rounded-2xl
-
-                  border border-amber-300/80
-
-                  bg-[rgba(255,249,218,0.90)]
-
-                  px-4 py-4
-
-                  shadow-[0_8px_24px_rgba(15,23,42,0.08)]
-
-                  backdrop-blur-[10px]
-
-                  sm:px-5
-                "
+              <span
+                className={`inline-flex w-fit shrink-0 rounded-full border px-3 py-1.5 text-xs font-bold sm:text-sm ${
+                  statusStyles[
+                    statusFilter
+                  ]
+                }`}
               >
-
-                <div className="flex items-start gap-3">
-
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-entes-accent text-sm font-bold text-black shadow-[0_0_14px_rgba(252,216,0,0.38)]">
-                    i
-                  </div>
-
-
-                  <div>
-
-                    <p className="text-sm font-bold text-entes-text">
-                      Akım Trafosu Seçimi
-                    </p>
+                {
+                  statusLabels[
+                    statusFilter
+                  ]
+                }
+              </span>
 
 
-                    <p className="mt-1 text-[13px] font-medium leading-6 text-entes-text/80 sm:text-sm">
-                      Bu uygulama için birden fazla
-                      akım trafosu seçeneği
-                      gösterilebilir. Uygulamaya uygun
-                      tip seçilir; tüm akım trafosu
-                      ürün gruplarının birlikte
-                      kullanılması gerekmez.
-                    </p>
+              <p className="text-sm leading-6 text-entes-text-muted sm:translate-y-[1px] sm:text-base sm:leading-7">
+                {
+                  statusDescriptions[
+                    statusFilter
+                  ]
+                }
+              </p>
 
-                  </div>
+            </div>
 
-                </div>
+          </div>
+
+        )}
+
+
+        {/* ==================================================
+            AKIM TRAFOSU SEÇİM UYARISI
+        ================================================== */}
+
+        {hasCurrentTransformerChoice && (
+
+          <div
+            className="
+              mt-4
+              rounded-2xl
+              border border-amber-300/80
+              bg-[rgba(255,249,218,0.90)]
+              px-4 py-4
+              shadow-[0_8px_24px_rgba(15,23,42,0.08)]
+              backdrop-blur-[10px]
+              sm:px-5
+            "
+          >
+
+            <div className="flex items-start gap-3">
+
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-entes-accent text-sm font-bold text-black shadow-[0_0_14px_rgba(252,216,0,0.38)]">
+                i
+              </div>
+
+
+              <div>
+
+                <p className="text-sm font-bold text-entes-text">
+                  Akım Trafosu Seçimi
+                </p>
+
+
+                <p className="mt-1 text-[13px] font-medium leading-6 text-entes-text/80 sm:text-sm">
+                  Bu uygulama için birden fazla
+                  akım trafosu seçeneği
+                  gösterilebilir. Uygulamaya uygun
+                  tip seçilir; tüm akım trafosu
+                  ürün gruplarının birlikte
+                  kullanılması gerekmez.
+                </p>
 
               </div>
 
-            )}
+            </div>
 
-          </>
+          </div>
+
         )}
 
 
@@ -830,10 +870,9 @@ export default function RelatedProducts({
             ÜRÜN KARTLARI
         ================================================== */}
 
-        {relatedItems.length >
-        0 ? (
-          filteredItems.length >
-          0 ? (
+        {relatedItems.length > 0 ? (
+
+          filteredItems.length > 0 ? (
 
             <div
               ref={scrollAreaRef}
@@ -841,38 +880,30 @@ export default function RelatedProducts({
             >
 
               {filteredItems.map(
-                ({
-                  product:
-                    relatedProduct,
-                  relation,
-                  status,
-                  title,
-                }) => {
+                (item) => {
+                  const {
+                    product:
+                      relatedProduct,
+                    relation,
+                    status,
+                    title,
+                  } = item;
+
 
                   const showCtChoice =
-                    hasCurrentTransformerChoice &&
-                    (
-                      status ===
-                        "required" ||
-                      status ===
-                        "conditional"
-                    ) &&
-                    currentTransformerProductIds.has(
-                      relatedProduct.id
+                    shouldShowCtChoice(
+                      item
                     );
 
 
                   return (
+
                     <div
-                      key={
-                        relation.id
-                      }
+                      key={relation.id}
                       className="min-w-[78vw] max-w-[78vw] snap-start overflow-hidden rounded-2xl border border-entes-border bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-entes-accent hover:shadow-lg sm:min-w-[260px] sm:max-w-[260px] lg:min-w-[230px] lg:max-w-[230px]"
                     >
 
-                      {/* ==================================================
-                          ÜRÜN GÖRSELİ
-                      ================================================== */}
+                      {/* ÜRÜN GÖRSELİ */}
 
                       <button
                         type="button"
@@ -888,6 +919,7 @@ export default function RelatedProducts({
 
                           {relatedProduct.image ? (
                             <>
+
                               <div className="pointer-events-none absolute left-1/2 top-1/2 h-[90px] w-[90px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-entes-accent/14 blur-2xl" />
 
                               <div className="pointer-events-none absolute left-1/2 top-1/2 h-[70px] w-[70px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-entes-accent/10 blur-xl" />
@@ -896,19 +928,26 @@ export default function RelatedProducts({
                               <div className="relative z-10 flex items-center justify-center">
 
                                 <Image
-                                  src={relatedProduct.image}
-                                  alt={relatedProduct.name}
+                                  src={
+                                    relatedProduct.image
+                                  }
+                                  alt={
+                                    relatedProduct.name
+                                  }
                                   width={210}
                                   height={140}
                                   className="max-h-[120px] w-auto object-contain drop-shadow-[0_8px_16px_rgba(15,23,42,0.10)]"
                                 />
 
                               </div>
+
                             </>
                           ) : (
+
                             <span className="text-3xl text-entes-text-muted">
                               ◈
                             </span>
+
                           )}
 
                         </div>
@@ -916,12 +955,9 @@ export default function RelatedProducts({
                       </button>
 
 
-                      {/* ==================================================
-                          KART İÇERİĞİ
-                      ================================================== */}
+                      {/* KART İÇERİĞİ */}
 
                       <div className="flex min-h-[220px] flex-col px-4 pb-4 pt-4">
-
 
                         {/* ÜRÜN ADI */}
 
@@ -944,9 +980,7 @@ export default function RelatedProducts({
                         </button>
 
 
-                        {/* ==================================================
-                            İLİŞKİ ETİKETLERİ
-                        ================================================== */}
+                        {/* İLİŞKİ ETİKETLERİ */}
 
                         <div className="mt-3 flex flex-col items-start gap-2">
 
@@ -970,8 +1004,6 @@ export default function RelatedProducts({
                           </span>
 
 
-                          {/* CT ONE-OF MESAJI */}
-
                           {showCtChoice && (
 
                             <span className="rounded-full border border-entes-accent/60 bg-entes-accent/10 px-2.5 py-1 text-[10px] font-semibold text-entes-text">
@@ -983,9 +1015,7 @@ export default function RelatedProducts({
                         </div>
 
 
-                        {/* ==================================================
-                            ALT AKSİYONLAR
-                        ================================================== */}
+                        {/* ALT AKSİYONLAR */}
 
                         <div className="mt-auto flex items-center justify-between gap-3 pt-5">
 
@@ -1021,6 +1051,7 @@ export default function RelatedProducts({
                       </div>
 
                     </div>
+
                   );
                 }
               )}
@@ -1029,29 +1060,35 @@ export default function RelatedProducts({
 
           ) : (
 
-            /* ==================================================
-                BOŞ FİLTRE
-            ================================================== */
+            /* BOŞ FİLTRE */
 
-            <div className="mt-5 rounded-2xl border border-dashed border-entes-border p-8 text-center">
+            <div className="mt-5 flex min-h-[150px] items-center justify-center rounded-2xl border border-dashed border-entes-border bg-entes-surface-muted/30 px-6 py-8 text-center">
 
-              <p className="text-sm font-bold">
-                Bu filtrede ilişkili ürün
-                bulunmuyor.
-              </p>
+              <div className="mx-auto flex max-w-md flex-col items-center justify-center">
+
+                <div className="text-2xl text-entes-text-muted">
+                  ◈
+                </div>
 
 
-              <button
-                type="button"
-                onClick={() =>
-                  setStatusFilter(
-                    "all"
-                  )
-                }
-                className="mt-3 text-xs font-semibold underline"
-              >
-                Tüm ilişkileri göster
-              </button>
+                <p className="mt-3 text-sm font-bold text-entes-text">
+                  Bu filtrede ilişkili ürün bulunmuyor.
+                </p>
+
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setStatusFilter(
+                      "all"
+                    )
+                  }
+                  className="mt-3 text-xs font-semibold text-entes-text-muted underline transition hover:text-entes-text"
+                >
+                  Tüm ilişkileri göster
+                </button>
+
+              </div>
 
             </div>
 
@@ -1059,29 +1096,27 @@ export default function RelatedProducts({
 
         ) : (
 
-          /* ==================================================
-              HİÇ RELATION YOK
-          ================================================== */
+          /* HİÇ RELATION YOK */
 
-          <div className="mt-5 rounded-2xl border border-dashed border-entes-border bg-entes-surface-muted/40 p-10 text-center">
+          <div className="mt-5 flex min-h-[190px] items-center justify-center rounded-2xl border border-dashed border-entes-border bg-entes-surface-muted/40 px-6 py-8 text-center">
 
-            <div className="text-3xl text-entes-text-muted">
-              ◈
+            <div className="mx-auto flex max-w-md flex-col items-center justify-center">
+
+              <div className="text-3xl text-entes-text-muted">
+                ◈
+              </div>
+
+
+              <h3 className="mt-4 text-sm font-bold text-entes-text">
+                Tanımlanmış ilişkili ürün bulunmuyor
+              </h3>
+
+
+              <p className="mt-2 text-sm leading-6 text-entes-text-muted">
+                Bu ürün grubu için mevcut ekosistem modeli içerisinde ürün ilişkisi tanımlanmamıştır.
+              </p>
+
             </div>
-
-
-            <h3 className="mt-4 text-sm font-bold">
-              Tanımlanmış ilişkili ürün
-              bulunmuyor
-            </h3>
-
-
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-entes-text-muted">
-              Bu ürün grubu için mevcut
-              ekosistem modeli içerisinde
-              ürün ilişkisi
-              tanımlanmamıştır.
-            </p>
 
           </div>
 
@@ -1115,10 +1150,7 @@ export default function RelatedProducts({
             className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:max-h-[85vh] sm:rounded-3xl sm:p-6 md:p-8"
           >
 
-
-            {/* ==================================================
-                MODAL HEADER
-            ================================================== */}
+            {/* MODAL HEADER */}
 
             <div className="flex items-start justify-between gap-4">
 
@@ -1161,16 +1193,12 @@ export default function RelatedProducts({
             </div>
 
 
-            {/* ==================================================
-                ETİKETLER
-            ================================================== */}
+            {/* ETİKETLER */}
 
             <div className="mt-6 flex flex-wrap gap-2">
 
               <span className="rounded-full bg-entes-surface-muted px-3 py-1.5 text-xs font-semibold">
-                {
-                  selectedItem.title
-                }
+                {selectedItem.title}
               </span>
 
 
@@ -1189,29 +1217,20 @@ export default function RelatedProducts({
               </span>
 
 
-              {hasCurrentTransformerChoice &&
-                (
-                  selectedItem.status ===
-                    "required" ||
-                  selectedItem.status ===
-                    "conditional"
-                ) &&
-                currentTransformerProductIds.has(
-                  selectedItem.product.id
-                ) && (
+              {shouldShowCtChoice(
+                selectedItem
+              ) && (
 
-                  <span className="rounded-full border border-entes-accent/60 bg-entes-accent/10 px-3 py-1.5 text-xs font-semibold text-entes-text">
-                    Uygun tip seçilir
-                  </span>
+                <span className="rounded-full border border-entes-accent/60 bg-entes-accent/10 px-3 py-1.5 text-xs font-semibold text-entes-text">
+                  Uygun tip seçilir
+                </span>
 
-                )}
+              )}
 
             </div>
 
 
-            {/* ==================================================
-                ÖNERİ SEVİYESİ
-            ================================================== */}
+            {/* ÖNERİ SEVİYESİ */}
 
             <div className="mt-5 rounded-2xl border border-entes-border bg-entes-surface-muted/60 p-4">
 
@@ -1231,42 +1250,31 @@ export default function RelatedProducts({
             </div>
 
 
-            {/* ==================================================
-                CT SEÇİM NOTU
-            ================================================== */}
+            {/* CT SEÇİM NOTU */}
 
-            {hasCurrentTransformerChoice &&
-              (
-                selectedItem.status ===
-                  "required" ||
-                selectedItem.status ===
-                  "conditional"
-              ) &&
-              currentTransformerProductIds.has(
-                selectedItem.product.id
-              ) && (
+            {shouldShowCtChoice(
+              selectedItem
+            ) && (
 
-                <div className="mt-4 rounded-2xl border border-amber-300/70 bg-amber-50/90 p-4">
+              <div className="mt-4 rounded-2xl border border-amber-300/70 bg-amber-50/90 p-4">
 
-                  <p className="text-sm font-bold text-entes-text">
-                    Akım Trafosu Seçimi
-                  </p>
+                <p className="text-sm font-bold text-entes-text">
+                  Akım Trafosu Seçimi
+                </p>
 
 
-                  <p className="mt-2 text-sm leading-6 text-entes-text-muted">
-                    Bu ürün, seçili
-                    uygulama için uygun
-                    akım trafosu
-                    seçeneklerinden biridir.
-                    Listelenen tüm akım
-                    trafosu tiplerinin
-                    birlikte kullanılması
-                    gerekmez.
-                  </p>
+                <p className="mt-2 text-sm leading-6 text-entes-text-muted">
+                  Bu ürün, seçili uygulama
+                  için uygun akım trafosu
+                  seçeneklerinden biridir.
+                  Listelenen tüm akım trafosu
+                  tiplerinin birlikte
+                  kullanılması gerekmez.
+                </p>
 
-                </div>
+              </div>
 
-              )}
+            )}
 
 
             {/* ==================================================
@@ -1274,7 +1282,6 @@ export default function RelatedProducts({
             ================================================== */}
 
             <div className="mt-8 space-y-6">
-
 
               {/* NEDEN */}
 
@@ -1297,27 +1304,22 @@ export default function RelatedProducts({
 
               {/* NE ZAMAN */}
 
-              {selectedItem.relation
-                .whenUsed && (
+              <div>
 
-                <div>
-
-                  <h4 className="text-sm font-bold">
-                    Ne zaman kullanılır?
-                  </h4>
+                <h4 className="text-sm font-bold">
+                  Ne zaman kullanılır?
+                </h4>
 
 
-                  <p className="mt-2 text-[15px] leading-7 text-entes-text-muted">
-                    {
-                      selectedItem
-                        .relation
-                        .whenUsed
-                    }
-                  </p>
+                <p className="mt-2 text-[15px] leading-7 text-entes-text-muted">
+                  {
+                    selectedItem
+                      .relation
+                      .whenUsed
+                  }
+                </p>
 
-                </div>
-
-              )}
+              </div>
 
 
               {/* NE ZAMAN GEREKMEZ */}
@@ -1328,8 +1330,7 @@ export default function RelatedProducts({
                 <div>
 
                   <h4 className="text-sm font-bold">
-                    Ne zaman gerekli
-                    olmayabilir?
+                    Ne zaman gerekli olmayabilir?
                   </h4>
 
 
@@ -1348,34 +1349,27 @@ export default function RelatedProducts({
 
               {/* TEKNİK NOT */}
 
-              {selectedItem.relation
-                .technicalNote && (
+              <div className="rounded-2xl bg-entes-surface-muted p-4">
 
-                <div className="rounded-2xl bg-entes-surface-muted p-4">
-
-                  <h4 className="text-sm font-bold">
-                    Teknik Not
-                  </h4>
+                <h4 className="text-sm font-bold">
+                  Teknik Not
+                </h4>
 
 
-                  <p className="mt-2 text-[15px] leading-7 text-entes-text-muted">
-                    {
-                      selectedItem
-                        .relation
-                        .technicalNote
-                    }
-                  </p>
+                <p className="mt-2 text-[15px] leading-7 text-entes-text-muted">
+                  {
+                    selectedItem
+                      .relation
+                      .technicalNote
+                  }
+                </p>
 
-                </div>
-
-              )}
+              </div>
 
             </div>
 
 
-            {/* ==================================================
-                ÜRÜNE GİT
-            ================================================== */}
+            {/* ÜRÜNE GİT */}
 
             <div className="mt-8 flex">
 

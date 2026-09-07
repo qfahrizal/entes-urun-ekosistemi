@@ -303,4 +303,11 @@ export const productSearchAliases: Record<
     "pmd",
     "phd",
   ],
+
+  "ct-serisi-akim-trafolari": [
+    "CT-25",
+    "ct",
+    "ct25",
+    "CT-80D",
+  ],
 };

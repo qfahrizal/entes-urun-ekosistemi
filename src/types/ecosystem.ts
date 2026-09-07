@@ -1,9 +1,18 @@
+// ==================================================
+// PRODUCT CATEGORIES
+// ==================================================
+
 export type ProductCategory =
   | "sensing"
   | "measurement"
   | "protection-control"
   | "correction"
   | "communication-energy";
+
+
+// ==================================================
+// MENU CATEGORIES
+// ==================================================
 
 export type MenuCategory =
   | "power-quality"
@@ -13,6 +22,11 @@ export type MenuCategory =
   | "protection-control"
   | "current-transformers";
 
+
+// ==================================================
+// RELATION STATUS
+// ==================================================
+
 export type RelationStatus =
   | "required"
   | "conditional"
@@ -20,13 +34,21 @@ export type RelationStatus =
   | "alternative"
   | "related";
 
+
+// ==================================================
+// RELATION TYPE
+// ==================================================
+
 export type RelationType =
   | "measurement-input"
+  | "measurement-analysis"
   | "data-transfer"
   | "control"
   | "protection"
   | "correction"
-  | "communication";
+  | "communication"
+  | "alternative";
+
 
 // ==================================================
 // PRODUCT
@@ -34,12 +56,16 @@ export type RelationType =
 
 export interface Product {
   id: string;
+
   name: string;
   shortName?: string;
+
   category: ProductCategory;
   menuCategory: MenuCategory;
+
   role: string;
   description: string;
+
   image?: string;
 
   modelPreviews?: {
@@ -57,6 +83,7 @@ export interface Product {
   }[];
 }
 
+
 // ==================================================
 // RELATION
 // ==================================================
@@ -64,62 +91,112 @@ export interface Product {
 export interface Relation {
   id: string;
 
+  /**
+   * İlişkinin iki ucundaki ürünler.
+   *
+   * Relation tek bir kayıt olarak tutulur fakat
+   * kullanıcı hangi üründen ilişkiye baktığına göre
+   * farklı status ve title gösterilebilir.
+   */
   sourceProductId: string;
   targetProductId: string;
 
+  /**
+   * İlişkinin teknik karakterini belirtir.
+   *
+   * Bu alan kullanıcıya gösterilen ilişki statüsünden
+   * bağımsızdır.
+   *
+   * Örnek:
+   * - measurement-input
+   * - correction
+   * - communication
+   * - protection
+   */
   type: RelationType;
 
 
-  // --------------------------------------------------
-  // ESKİ SİSTEM
-  // --------------------------------------------------
-  /*
-   * Geçiş sürecinde henüz yeni yapıya
-   * dönüştürülmemiş relation kayıtları için.
+  // ==================================================
+  // SOURCE PERSPECTIVE
+  // ==================================================
+
+  /**
+   * Kullanıcının seçtiği ürün sourceProductId ise
+   * bu status gösterilir.
    *
-   * Tüm relations.ts yeni sisteme geçirildikten
-   * sonra status ve title tamamen kaldırılabilir.
+   * Örnek:
+   *
+   * sourceProductId: Akım Trafosu
+   * targetProductId: Şebeke Analizörü
+   *
+   * Kullanıcı Akım Trafosuna bakıyorsa:
+   * sourceStatus kullanılacaktır.
    */
+  sourceStatus: RelationStatus;
 
-  status?: RelationStatus;
-  title?: string;
-
-
-  // --------------------------------------------------
-  // SOURCE TARAFI
-  // --------------------------------------------------
-  /*
-   * Seçili ürün sourceProductId ise
-   * RelatedProducts bu alanları kullanır.
+  /**
+   * Kullanıcının seçtiği ürün sourceProductId ise,
+   * karşı taraftaki ürün kartında gösterilecek
+   * ilişki başlığıdır.
    */
-
-  sourceStatus?: RelationStatus;
-  sourceTitle?: string;
+  sourceTitle: string;
 
 
-  // --------------------------------------------------
-  // TARGET TARAFI
-  // --------------------------------------------------
-  /*
-   * Seçili ürün targetProductId ise
-   * RelatedProducts bu alanları kullanır.
+  // ==================================================
+  // TARGET PERSPECTIVE
+  // ==================================================
+
+  /**
+   * Kullanıcının seçtiği ürün targetProductId ise
+   * bu status gösterilir.
+   *
+   * Örnek:
+   *
+   * sourceProductId: Akım Trafosu
+   * targetProductId: Şebeke Analizörü
+   *
+   * Kullanıcı Şebeke Analizörüne bakıyorsa:
+   * targetStatus kullanılacaktır.
    */
+  targetStatus: RelationStatus;
 
-  targetStatus?: RelationStatus;
-  targetTitle?: string;
+  /**
+   * Kullanıcının seçtiği ürün targetProductId ise,
+   * karşı taraftaki ürün kartında gösterilecek
+   * ilişki başlığıdır.
+   */
+  targetTitle: string;
 
 
-  // --------------------------------------------------
-  // İLİŞKİ DETAYLARI
-  // --------------------------------------------------
+  // ==================================================
+  // RELATION DETAILS
+  // ==================================================
 
+  /**
+   * İki ürünün neden ilişkili olduğunu açıklar.
+   */
   reason: string;
 
-  whenUsed?: string;
+  /**
+   * İlişkinin hangi uygulama veya koşulda
+   * anlamlı olduğunu açıklar.
+   */
+  whenUsed: string;
 
+  /**
+   * İlgili ürünün hangi durumda gerekli olmadığını
+   * açıklar.
+   *
+   * Her relation için anlamlı olmadığı için optional.
+   */
   whenNotRequired?: string;
 
-  technicalNote?: string;
+  /**
+   * Model uyumluluğu, bağlantı yapısı,
+   * teknik sınırlamalar veya mühendislik açısından
+   * dikkat edilmesi gereken bilgileri içerir.
+   */
+  technicalNote: string;
 }
 
 

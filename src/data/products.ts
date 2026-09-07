@@ -51,36 +51,6 @@ export const products: Product[] = [
         path: "/plug-meter-urunleri/",
       },
     ],
-    /*modelPreviews: [
-      {
-        name: "MPR-1 Serisi",
-        image: "/products/sebeke-analizorleri/mpr-1.png",
-      },
-      {
-        name: "MPR-2 Serisi",
-        image: "/products/sebeke-analizorleri/mpr-2.png",
-      },
-      {
-        name: "MPR-3 Serisi",
-        image: "/products/sebeke-analizorleri/mpr-3.png",
-      },
-      {
-        name: "MPR-4 Serisi",
-        image: "/products/sebeke-analizorleri/mpr-4.png",
-      },
-      {
-        name: "MPR-5 Serisi",
-        image: "/products/sebeke-analizorleri/mpr-5.png",
-      },
-      {
-        name: "MPR-6 Serisi",
-        image: "/products/sebeke-analizorleri/mpr-6.png",
-      },
-      {
-        name: "EPM-07 Serisi",
-        image: "/products/sebeke-analizorleri/epm-07.png",
-      },
-    ],*/
     category: "measurement",
     menuCategory: "power-quality",
     role: "Elektriksel parametrelerin ölçülmesi, izlenmesi ve analiz edilmesi",
@@ -552,6 +522,30 @@ export const products: Product[] = [
     websiteUrl: "https://www.entes.com.tr/3-fazli-akim-trafolari-528/",
   },
 
+
+  {
+    id: "ct-serisi-akim-trafolari",
+    name: "CT Serisi Akım Trafoları",
+    seriesPages: [
+      {
+        name: "CT-25",
+        path: "/ct-25/",
+      },
+      {
+        name: "CT-80D",
+        path: "/ct-80d/",
+      },
+    ],
+    category: "sensing",
+    menuCategory: "current-transformers",
+    role: "Uyumlu ENTES dijital ölçüm ve koruma cihazları için kompakt akım algılama çözümü sağlanması",
+    description: "ENTES CT Serisi Akım Trafoları; enerji izleme ve elektriksel ölçüm uygulamalarında kullanılmak üzere geliştirilmiş kompakt akım trafosu ürün grubudur. CT-25 ve CT-80D modellerinin kullanılabilirliği bağlanacak ENTES cihazının akım giriş yapısına göre doğrulanmalıdır.",
+    image: "/products/ct-serisi.png",
+    brochureUrl: "https://www.entes.com.tr/brosurler/",
+    priceListUrl: "https://www.entes.com.tr/uploads/contents/file/entes_fiyat_listesi_temmuz_2026-6a4f6f6446f2c.pdf",
+    websiteUrl: "https://www.entes.com.tr/ct-serisi-akim-trafolari/",
+  },
+
   // --------------------------------------------------
   // ENERJİ YÖNETİMİ
   // --------------------------------------------------
@@ -601,8 +595,8 @@ export const products: Product[] = [
     name: "Veri Toplayıcılar",
     category: "communication-energy",
     menuCategory: "energy-management",
-    role: "Saha cihazlarından elde edilen ölçüm ve parametre verilerinin toplanması ve enerji yönetimi sistemlerine aktarılması",
-    description: "ENTES Veri Toplayıcılar; uyumlu saha cihazlarından elde edilen elektriksel ölçüm ve parametre verilerinin bir araya getirilmesi ve enerji yönetimi sistemlerine aktarılmasına yönelik ürün grubudur. RS-485 haberleşmeli reaktif güç kontrol röleleri, şebeke analizörleri, ölçüm cihazları ve uygun koruma-kontrol cihazlarından gelen verilerin merkezi bir izleme altyapısına taşınmasında kullanılabilir.",
+    role: "Elektrik, su, doğalgaz ve benzeri sayaçlardan gelen pulse verilerinin toplanması ve RS-485 üzerinden üst seviye sisteme aktarılması",
+    description: "ENTES Veri Toplayıcılar; EPC-12 gibi ürünlerle pulse çıkışlı elektrik, su, doğalgaz ve benzeri sayaçlardan gelen tüketim verilerinin toplanması ve RS-485 haberleşme üzerinden dış sistemlere aktarılmasına yönelik ürün grubudur. EPC-12, 12 adet pulse girişinden gelen verileri toplayabilir.",
     image: "/products/epc12.png",
     brochureUrl: "https://www.entes.com.tr/brosurler/",
     priceListUrl: "https://www.entes.com.tr/uploads/contents/file/entes_fiyat_listesi_temmuz_2026-6a4f6f6446f2c.pdf",
