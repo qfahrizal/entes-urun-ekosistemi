@@ -131,7 +131,7 @@ Bilgisayarda aşağıdakilerin kurulu olması gerekir:
 - npm
 - Git
 
-### 1. Repository'yi klonlayın
+### Repository'yi klonlayın
 
 ```bash
 git clone https://github.com/qfahrizal/entes-urun-ekosistemi.git
