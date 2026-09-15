@@ -134,7 +134,7 @@ Bilgisayarda aşağıdakilerin kurulu olması gerekir:
 ### 1. Repository'yi klonlayın
 
 ```bash
-git clone <REPOSITORY_URL>
+git clone https://github.com/qfahrizal/entes-urun-ekosistemi.git
 ```
 
 ### 2. Proje klasörüne girin
@@ -663,6 +663,14 @@ Staj projesi kapsamında geliştirilen MVP'nin production sürümü canlıya al�
 https://entes-product-ecosystem.vercel.app
 
 Projede yapılacak sonraki geliştirmelerde teknik doğruluğun korunması ve model bazlı kararların resmi ENTES kaynakları üzerinden doğrulanması önerilir.
+
+---
+
+## Dokümantasyon
+
+- [Geliştirme Rehberi](docs/GELISTIRME_REHBERI.md)
+- [İlişki Modeli](docs/RELATION_MODEL.md)
+- [Roadmap](docs/ROADMAP.md)
 
 ---
 
